@@ -11,7 +11,11 @@ export default class Map extends THREE.Group {
         super();
         WorldQuill.ThreeJsWorld._scene.add(this);
     }
-    addChunk() {
-        this.add(new Chunk());
+    #checkifChunkExists(x, y) {
+        return this.children.some(chunk => chunk._location[0] == x && chunk._location[1] == y);
+    }
+    addChunk(x, y) {
+        if (this.#checkifChunkExists(x, y)) return alert('Chunk already exists');
+        this.add(new Chunk(x, y));
     }
 }

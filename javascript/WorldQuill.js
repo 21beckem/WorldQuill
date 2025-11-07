@@ -11,10 +11,10 @@ export class WorldQuill {
         this.ThreeJsWorld = new ThreeJsWorld();
 
         this.tools.push(new InteractTool());
-        this.setToolMode('interact');
+        // this.setToolMode('interact');
 
         this.Map = new Map();
-        this.Map.addChunk();
+        this.Map.addChunk(0,0);
     }
     static setToolMode(mode) {
         this.ThreeJsWorld._raycaster.setMode(mode);

@@ -17,7 +17,7 @@ export default class ThreeJsWorld {
         this.#setupRenderLoop();
 		this.#setupRaycaster();
 
-        this.#makeSimpleBox(0, 0, 0);
+        // this.#makeSimpleBox(0, 0, 0);
     }
     #initThree() {
         renderer.domElement.id = 'WorldQuillDomElement';

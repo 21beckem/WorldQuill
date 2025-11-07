@@ -10,8 +10,6 @@ export default class Tile extends THREE.Mesh {
             })
         );
         this.position.set(posX, 0, posY);
-        // console.log(posX, posY);
-        
     }
 }
 

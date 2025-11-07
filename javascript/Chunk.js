@@ -14,7 +14,7 @@ export default class Chunk extends THREE.Group {
     _entities = Array();
     constructor(x, y) {
         super();
-        this._location.set(x, y);
+        this.move(x, y);
 
         this.#initChildren();
     }
@@ -22,13 +22,15 @@ export default class Chunk extends THREE.Group {
         const halfWidth = chunkWidthInTiles / 2.0;
         for (let w = -halfWidth; w < halfWidth; w++) {
             for (let l = -halfWidth; l < halfWidth; l++) {
-                
-                console.log(w, l);
+
                 let tile = new Tile(w*tileWidth, l*tileWidth);
                 this.add(tile);
                 
             }
-            
         }
+    }
+    move(x, y) {
+        this._location = [x, y];
+        this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
     }
 }

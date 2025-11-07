@@ -3,5 +3,5 @@ export const renderer = new THREE.WebGLRenderer({
     antialias: true,
 });
 export const tileWidth = 5.0;
-export const tileRimHeight = 5.0;
-export const chunkWidthInTiles = 10;
+export const tileRimHeight = 0.5;
+export const chunkWidthInTiles = 30;
