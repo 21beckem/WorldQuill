@@ -1,6 +1,6 @@
 import { WorldQuill } from "../WorldQuill.js";
 
-class Tool {
+export default class Tool {
     constructor(mode) {
         WorldQuill.ThreeJsWorld._raycaster.addTool(mode,
             this.onDown.bind(this),
@@ -14,4 +14,3 @@ class Tool {
     onUp(args) {}
     onClick(args) {}
 }
-export default Tool;

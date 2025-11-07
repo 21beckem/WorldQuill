@@ -3,7 +3,7 @@ import * as THREE from './three.module.min.js';
 import { OrbitControls } from './OrbitControls.min.js';
 import Raycaster from '../Raycaster.js';
 
-class ThreeJsWorld {
+export default class ThreeJsWorld {
     constructor() {
         this._scene = new THREE.Scene();
 
@@ -109,4 +109,3 @@ class ThreeJsWorld {
 		this._scene.add(box);
 	}
 }
-export default ThreeJsWorld;

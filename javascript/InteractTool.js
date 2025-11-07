@@ -1,6 +1,6 @@
 import Tool from './supers/Tool.js';
 
-class InteractTool extends Tool {
+export default class InteractTool extends Tool {
     constructor() {
         super('interact');
     }
@@ -18,5 +18,3 @@ class InteractTool extends Tool {
         console.log('Interact click:', args, 'Found:', found);
     }
 }
-
-export default InteractTool;

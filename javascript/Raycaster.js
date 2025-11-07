@@ -1,7 +1,7 @@
 import { renderer } from './constants.js';
 import * as THREE from './supers/three.module.min.js';
 
-class Raycaster {
+export default class Raycaster {
     _tools = Array();
     #mode = null;
     constructor(camera, scene) {
@@ -103,5 +103,3 @@ class Raycaster {
         });
     }
 }
-
-export default Raycaster;
