@@ -1,4 +1,4 @@
-import { renderer } from './constants.js';
+import { renderer } from '../constants.js';
 import * as THREE from './three.module.min.js';
 import { OrbitControls } from './OrbitControls.min.js';
 

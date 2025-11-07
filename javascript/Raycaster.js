@@ -1,16 +1,19 @@
 import { renderer } from './constants.js';
-import * as THREE from './three.module.min.js';
+import * as THREE from './supers/three.module.min.js';
 
 class Raycaster {
     _tools = Array();
     #mode = null;
-    constructor() {
+    constructor(camera, scene) {
+        this._camera = camera;
+        this._scene = scene;
         this._raycaster = new THREE.Raycaster();
 		this._pointer = new THREE.Vector2();
 		this._clickMouse = new THREE.Vector2();
 		this._moveMouse = new THREE.Vector2();
 		this._moveMouseDistance = 0;
         this._draggingMouseMovedYet = false;
+        this._mouseIsDown = false;
 
         this.#setupPointerDown();
         this.#setupPointerMove();
@@ -18,6 +21,8 @@ class Raycaster {
     }
     #setupPointerDown() {
         renderer.domElement.addEventListener('pointerdown', event => {
+            // console.log('down');
+            this._mouseIsDown = true;
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
 
@@ -27,7 +32,8 @@ class Raycaster {
     }
     #setupPointerMove() {
 		renderer.domElement.addEventListener('pointermove', event => {
-			//console.log('move');
+            if (!this._mouseIsDown) return;
+			// console.log('move');
             this.#doOnAllEvents(event);
 
             // if we haven't move far yet, don't bother calling functions
@@ -38,17 +44,17 @@ class Raycaster {
     }
     #setupPointerUp() {
         renderer.domElement.addEventListener('pointerup', event => {
-            //console.log('up');
+            if (!this._mouseIsDown) return;
+            // console.log('up');
             this.#doOnAllEvents(event);
             this.#sendEvent('onUp');
             
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
+            this._mouseIsDown = false;
         });
     }
     #doOnAllEvents(event, calculateDistance=true) {
-        event.preventDefault();
-
         let newMouseX = (event.clientX / window.innerWidth) * 2 - 1;
         let newMouseY = -(event.clientY / window.innerHeight) * 2 + 1
 
@@ -65,13 +71,18 @@ class Raycaster {
     }
     #sendEvent(funcName) {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => {
-            tool[funcName](
-                this._raycaster,
-                this._clickMouse,
-                this._moveMouse,
-                (intersectables) => this._raycaster.intersectObjects(intersectables),
-            );
+            tool[funcName]({
+                raycaster: this._raycaster,
+                clickOrigin: this._clickMouse,
+                currentMousePosition: this._moveMouse,
+                castRay: (intersectables) => this.castFunction(intersectables),
+            });
         });
+    }
+    castFunction(intersectables=null) {
+        if (!intersectables.length == 0)
+            intersectables = this._scene.children;
+        return this._raycaster.intersectObjects(intersectables);
     }
     setMode(mode) {
         this.#mode = mode;
