@@ -5,13 +5,13 @@ export default class InteractTool extends Tool {
         super('interact');
     }
     onDown(args) {
-        console.log('Interact down:', args);
+        // console.log('Interact down:', args);
     }
     onMove(args) {
-        console.log('Interact move:', args);
+        // console.log('Interact move:', args);
     }
     onUp(args) {
-        console.log('Interact up:', args);
+        // console.log('Interact up:', args);
     }
     onClick(args) {
         const found = args.castRay();

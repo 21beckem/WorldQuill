@@ -1,5 +1,6 @@
 import * as THREE from './supers/three.module.min.js';
 import { tileWidth, tileRimHeight } from './constants.js';
+import { WorldQuill } from './WorldQuill.js';
 
 export default class Tile extends THREE.Mesh {
     constructor(posX, posY) {
@@ -9,6 +10,7 @@ export default class Tile extends THREE.Mesh {
                 color: 0x808080,
             })
         );
+        WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(posX, 0, posY);
         this._posX = posX;
         this._posY = posY;

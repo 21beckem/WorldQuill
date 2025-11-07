@@ -1,8 +1,11 @@
-import { renderer } from './constants.js';
-import * as THREE from './supers/three.module.min.js';
+import { renderer } from '../constants.js';
+import { WorldQuill } from '../WorldQuill.js';
+import * as THREE from './three.module.min.js';
 
 export default class Raycaster {
     _tools = Array();
+    _flatListOfTiles = Array();
+    _flatListOfEntityHitboxes = Array();
     #mode = null;
     constructor(camera, scene) {
         this._camera = camera;
@@ -14,6 +17,7 @@ export default class Raycaster {
 		this._moveMouseDistance = 0;
         this._draggingMouseMovedYet = false;
         this._mouseIsDown = false;
+        this._flatListOfTiles = Array();
 
         this.#setupPointerDown();
         this.#setupPointerMove();
@@ -25,7 +29,7 @@ export default class Raycaster {
             this._mouseIsDown = true;
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
-
+            
             this.#doOnAllEvents(event, false);
             this.#sendEvent('onDown');
 		});
@@ -76,8 +80,10 @@ export default class Raycaster {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => {
             tool[funcName]({
                 raycaster: this._raycaster,
-                clickOrigin: this._clickMouse,
-                currentMousePosition: this._moveMouse,
+                tileList: this._flatListOfTiles,
+                entityHitboxList: this._flatListOfEntityHitboxes,
+                // clickOrigin: this._clickMouse,
+                // currentMousePosition: this._moveMouse,
                 castRay: this.castFunction.bind(this),
             });
         });
@@ -89,17 +95,17 @@ export default class Raycaster {
         return this._raycaster.intersectObjects(intersectables);
     }
     setMode(mode) {
+        this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onDeactivate()); // deactivate old mode
         this.#mode = mode;
+        this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onActivate()); // activate new mode
     }
-    addTool(mode, onDown, onMove, onUp, onClick) {
-        if (this._tools.some(tool => tool.mode == mode))
-            throw new Error(`There is already a tool with mode ${mode}`);
-        this._tools.push({
-            mode,
-            onDown,
-            onMove,
-            onUp,
-            onClick
-        });
+    addTool(tool) {
+        if (this._tools.some(t => t.mode == tool.mode))
+            throw new Error(`There is already a tool with mode ${tool.mode}`);
+        this._tools.push(tool);
+
+        // if this is the first tool, set it as active by default
+        if (this._tools.length == 1)
+            this.setMode(tool.mode);
     }
 }

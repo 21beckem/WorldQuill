@@ -2,13 +2,14 @@ import { WorldQuill } from "../WorldQuill.js";
 
 export default class Tool {
     constructor(mode) {
-        WorldQuill.ThreeJsWorld._raycaster.addTool(mode,
-            this.onDown.bind(this),
-            this.onMove.bind(this),
-            this.onUp.bind(this),
-            this.onClick.bind(this)
-        );
+        this.mode = mode;
+        WorldQuill.ThreeJsWorld._raycaster.addTool(this);
     }
+    activate(){
+        WorldQuill.ThreeJsWorld._raycaster.setMode(this.mode);
+    }
+    onActivate() {}
+    onDeactivate() {}
     onDown(args) {}
     onMove(args) {}
     onUp(args) {}
