@@ -1,6 +1,7 @@
 import { renderer } from '../constants.js';
 import * as THREE from './three.module.min.js';
 import { OrbitControls } from './OrbitControls.min.js';
+import Raycaster from '../Raycaster.js';
 
 class ThreeJsWorld {
     constructor() {
@@ -14,6 +15,7 @@ class ThreeJsWorld {
         
         this.#setupOrbitControls();
         this.#setupRenderLoop();
+		this.#setupRaycaster();
 
         this.#makeSimpleBox(0, 0, 0);
     }
@@ -84,6 +86,9 @@ class ThreeJsWorld {
             renderer.render(this._scene, this._camera);
         });
     }
+	#setupRaycaster() {
+		this._raycaster = new Raycaster(this._camera, this._scene);
+	}
 
     #setupOrbitControls() {
         this._controls = new OrbitControls(

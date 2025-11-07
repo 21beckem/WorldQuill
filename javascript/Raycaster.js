@@ -47,7 +47,11 @@ class Raycaster {
             if (!this._mouseIsDown) return;
             // console.log('up');
             this.#doOnAllEvents(event);
-            this.#sendEvent('onUp');
+
+            if (this._draggingMouseMovedYet)
+                this.#sendEvent('onUp');
+            else
+                this.#sendEvent('onClick');
             
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
@@ -67,7 +71,6 @@ class Raycaster {
 
         this._moveMouse.x = newMouseX;
         this._moveMouse.y = newMouseY;
-        this._raycaster.setFromCamera(this._clickMouse, this._camera);
     }
     #sendEvent(funcName) {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => {
@@ -75,26 +78,28 @@ class Raycaster {
                 raycaster: this._raycaster,
                 clickOrigin: this._clickMouse,
                 currentMousePosition: this._moveMouse,
-                castRay: (intersectables) => this.castFunction(intersectables),
+                castRay: this.castFunction.bind(this),
             });
         });
     }
     castFunction(intersectables=null) {
-        if (!intersectables.length == 0)
+        if (!intersectables)
             intersectables = this._scene.children;
+        this._raycaster.setFromCamera(this._moveMouse, this._camera);
         return this._raycaster.intersectObjects(intersectables);
     }
     setMode(mode) {
         this.#mode = mode;
     }
-    addTool(mode, onDown, onMove, onUp) {
+    addTool(mode, onDown, onMove, onUp, onClick) {
         if (this._tools.some(tool => tool.mode == mode))
             throw new Error(`There is already a tool with mode ${mode}`);
         this._tools.push({
             mode,
             onDown,
             onMove,
-            onUp
+            onUp,
+            onClick
         });
     }
 }

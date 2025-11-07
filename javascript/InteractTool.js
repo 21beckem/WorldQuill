@@ -1,15 +1,21 @@
 import Tool from './supers/Tool.js';
 
 class InteractTool extends Tool {
-    mode = 'interact';
+    constructor() {
+        super('interact');
+    }
     onDown(args) {
-        console.log('down:', args);
+        console.log('Interact down:', args);
     }
     onMove(args) {
-        console.log('HAHAA move:', args);
+        console.log('Interact move:', args);
     }
     onUp(args) {
-        console.log('up:', args);
+        console.log('Interact up:', args);
+    }
+    onClick(args) {
+        const found = args.castRay();
+        console.log('Interact click:', args, 'Found:', found);
     }
 }
 
