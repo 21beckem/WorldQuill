@@ -19,6 +19,10 @@ export default class Tile extends THREE.Mesh {
     #makeWalls() {
         // TODO
     }
+    addHeight(height) {
+        this.position.y += height * tileWidth;
+        this.#makeWalls();
+    }
     setHeight(height) {
         this.position.y = height * tileWidth;
         this.#makeWalls();

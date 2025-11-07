@@ -1,4 +1,4 @@
-import Tool from './supers/Tool.js';
+import Tool from '../supers/Tool.js';
 
 export default class InteractTool extends Tool {
     constructor() {

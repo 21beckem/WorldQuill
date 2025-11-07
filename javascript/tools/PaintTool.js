@@ -1,5 +1,5 @@
-import Tool from './supers/Tool.js';
-import * as THREE from './supers/three.module.min.js';
+import Tool from '../supers/Tool.js';
+import * as THREE from '../supers/three.module.min.js';
 
 export default class PaintTool extends Tool {
     constructor() {

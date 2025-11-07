@@ -1,6 +1,7 @@
 import ThreeJsWorld from './supers/ThreeJsWorld.js';
-import InteractTool from './InteractTool.js';
-import PaintTool from './PaintTool.js';
+import InteractTool from './tools/InteractTool.js';
+import PaintTool from './tools/PaintTool.js';
+import TerrainBrushTool from './tools/TerrainBrushTool.js';
 import Map from './Map.js';
 
 class Tools extends Array {
@@ -20,6 +21,7 @@ export class WorldQuill {
     static init() {
         this.ThreeJsWorld = new ThreeJsWorld();
 
+        this.tools.push(new TerrainBrushTool());
         this.tools.push(new InteractTool());
         this.tools.push(new PaintTool());
 
