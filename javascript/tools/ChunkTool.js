@@ -1,8 +1,10 @@
 import Tool from '../supers/Tool.js';
+import * as THREE from '../supers/three.module.min.js';
 import { WorldQuill } from '../WorldQuill.js';
+import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
 
 export default class ChunkTool extends Tool {
-    _nonSelectedOpacity = 0.5;
+    _nonSelectedOpacity = 0.7;
     _currentlyHoveringOverChunk = null;
     _currentlySelectedChunk = null;
     
@@ -16,6 +18,7 @@ export default class ChunkTool extends Tool {
         WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(this._nonSelectedOpacity));
     }
     onDeactivate() {
+        this.#unselectChunk();
         WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(1));
     }
     onDown(args) {
@@ -62,12 +65,42 @@ export default class ChunkTool extends Tool {
     #unselectChunk() {
         if (this._currentlySelectedChunk) {
             this._currentlySelectedChunk.setOpacity(this._nonSelectedOpacity);
+            this._currentlySelectedChunk.children
+                .filter(child => child.thisIsAnOutline)
+                .forEach(outln => {
+                    this._currentlySelectedChunk.remove(outln);
+                });
             this._currentlySelectedChunk = null;
         }
     }
     #setSelectedChunk(chunk) {
         this._currentlySelectedChunk = chunk;
         this._currentlyHoveringOverChunk = null;
-        this._currentlySelectedChunk.setOpacity(1);
+        chunk.setOpacity(1);
+        this.#createOutline(chunk, false);
+    }
+
+    #createOutline(chunk) {
+        const absoluteW = tileWidth*chunkWidthInTiles;
+
+        // Create the line segments object
+        const outln = new THREE.LineSegments(
+            new THREE.EdgesGeometry(
+                new THREE.PlaneGeometry( absoluteW, absoluteW, 1, 1 )
+            ),
+            new THREE.LineBasicMaterial( { color: 0x0000ff } )
+        );
+        outln.rotation.x = Math.PI / 2;
+        outln.renderOrder = 1;
+        outln.material.linewidth = 20;
+        outln.position.set(
+            outln.position.x - (tileWidth / 2),
+            tileRimHeight / 2,
+            outln.position.z - (tileWidth / 2)
+        );
+        console.log(outln);
+        
+        outln.thisIsAnOutline = true;
+        chunk.add(outln);
     }
 }

@@ -1,7 +1,7 @@
 import Tool from '../supers/Tool.js';
 
 export default class TerrainBrushTool extends Tool {
-    _diameter = 2;
+    _diameter = 4;
     _lastTileId = null;
     constructor() {
         super('terrain-brush', 't');
