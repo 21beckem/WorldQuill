@@ -3,7 +3,7 @@ import { tileWidth, tileHeightStep, tileRimHeight, chunkWidthInTiles } from './c
 import { WorldQuill } from './WorldQuill.js';
 
 export default class Tile extends THREE.Mesh {
-    constructor(locX, locY) {
+    constructor(locX, locY, parent) {
         super(
             BoxNoBottomGeometry(tileWidth, tileRimHeight, tileWidth),
             new THREE.MeshStandardMaterial({
@@ -15,6 +15,7 @@ export default class Tile extends THREE.Mesh {
         this._locX = locX;
         this._locY = locY;
         this.setHeight(0);
+        this.chunk = parent;
     }
     makeWalls() {
         if (this.position.y == 0)
@@ -96,6 +97,7 @@ export default class Tile extends THREE.Mesh {
             walls.castShadow = true;
             walls.receiveShadow = true;
             walls.userData.wall = true;
+            walls.chunk = this.parent;
             this.add(walls);
         }
     }

@@ -36,9 +36,12 @@ export default class Raycaster {
     }
     #setupPointerMove() {
 		renderer.domElement.addEventListener('pointermove', event => {
-            if (!this._mouseIsDown) return;
-			// console.log('move');
             this.#doOnAllEvents(event);
+
+            if (!this._mouseIsDown) { // if mouse isn't down, it's a hover
+                this.#sendEvent('onHoverMove');
+                return;
+            }
 
             // if we haven't move far yet, don't bother calling functions
             if (!this._draggingMouseMovedYet)
@@ -76,17 +79,20 @@ export default class Raycaster {
         this._moveMouse.x = newMouseX;
         this._moveMouse.y = newMouseY;
     }
+    #makeReturnObj() {
+        return {
+            raycaster: this._raycaster,
+            tileList: this._flatListOfTiles,
+            entityHitboxList: this._flatListOfEntityHitboxes,
+            // clickOrigin: this._clickMouse,
+            // currentMousePosition: this._moveMouse,
+            castRay: this.castFunction.bind(this),
+            resetMoveDistance: this.resetMoveDistanceFunction.bind(this)
+        };
+    }
     #sendEvent(funcName) {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => {
-            tool[funcName]({
-                raycaster: this._raycaster,
-                tileList: this._flatListOfTiles,
-                entityHitboxList: this._flatListOfEntityHitboxes,
-                // clickOrigin: this._clickMouse,
-                // currentMousePosition: this._moveMouse,
-                castRay: this.castFunction.bind(this),
-                resetMoveDistance: this.resetMoveDistanceFunction.bind(this)
-            });
+            tool[funcName]( this.#makeReturnObj() );
         });
     }
     castFunction(intersectables) {
@@ -103,7 +109,7 @@ export default class Raycaster {
     setMode(mode) {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onDeactivate()); // deactivate old mode
         this.#mode = mode;
-        this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onActivate()); // activate new mode
+        this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onActivate( this.#makeReturnObj() )); // activate new mode
     }
     addTool(tool) {
         if (this._tools.some(t => t.mode == tool.mode))

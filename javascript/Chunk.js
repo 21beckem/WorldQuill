@@ -23,7 +23,7 @@ export default class Chunk extends THREE.Group {
         for (let w = -halfWidth; w < halfWidth; w++) {
             for (let l = -halfWidth; l < halfWidth; l++) {
 
-                let tile = new Tile(w, l);
+                let tile = new Tile(w, l, this);
                 // tile.setHeight(l + w); // obviously change this later
                 this.add(tile);
                 
@@ -36,5 +36,15 @@ export default class Chunk extends THREE.Group {
     move(x, y) {
         this._location = [x, y];
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
+    }
+    setOpacity(opacity) {
+        this.children.forEach(tile =>{
+            tile.material.transparent = (opacity !== 1.0);
+            tile.material.opacity = opacity;
+            if (tile.children.length > 0) {
+                tile.children[0].material.transparent = (opacity !== 1.0);
+                tile.children[0].material.opacity = opacity;
+            }
+        });
     }
 }

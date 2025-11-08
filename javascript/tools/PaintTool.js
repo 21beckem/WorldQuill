@@ -3,7 +3,7 @@ import * as THREE from '../supers/three.module.min.js';
 
 export default class PaintTool extends Tool {
     constructor() {
-        super('paint');
+        super('paint', 'p');
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
@@ -25,8 +25,7 @@ export default class PaintTool extends Tool {
     }
     paint(args) {
         const found = args.castRay(args.tileList);
-        found.forEach(f => {
-            f.object.material.color = new THREE.Color('#42f557');
-        });
+        if (found.length < 1) return;
+        found[0].object.material.color = new THREE.Color('#42f557');
     }
 }

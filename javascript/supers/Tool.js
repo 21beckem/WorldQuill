@@ -21,6 +21,7 @@ export default class Tool {
     onDeactivate() {}
     onDown(args) {}
     onMove(args) {}
+    onHoverMove(args) {}
     onUp(args) {}
     onClick(args) {}
 }
