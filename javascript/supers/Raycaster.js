@@ -85,14 +85,20 @@ export default class Raycaster {
                 // clickOrigin: this._clickMouse,
                 // currentMousePosition: this._moveMouse,
                 castRay: this.castFunction.bind(this),
+                resetMoveDistance: this.resetMoveDistanceFunction.bind(this)
             });
         });
     }
-    castFunction(intersectables=null) {
+    castFunction(intersectables) {
         if (!intersectables)
-            intersectables = this._scene.children;
+            return [];
         this._raycaster.setFromCamera(this._moveMouse, this._camera);
         return this._raycaster.intersectObjects(intersectables);
+    }
+    resetMoveDistanceFunction() {
+        this._moveMouseDistance = 0;
+        this._draggingMouseMovedYet = false;
+        this._clickMouse = this._moveMouse;
     }
     setMode(mode) {
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onDeactivate()); // deactivate old mode

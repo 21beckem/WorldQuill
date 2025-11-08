@@ -14,7 +14,7 @@ export default class InteractTool extends Tool {
         // console.log('Interact up:', args);
     }
     onClick(args) {
-        const found = args.castRay();
+        const found = args.castRay( [...args.tileList, ...args.entityHitboxList] );
         console.log('Interact click:', args, 'Found:', found);
     }
 }

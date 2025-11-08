@@ -23,7 +23,7 @@ export default class Chunk extends THREE.Group {
         for (let w = -halfWidth; w < halfWidth; w++) {
             for (let l = -halfWidth; l < halfWidth; l++) {
 
-                let tile = new Tile(w*tileWidth, l*tileWidth);
+                let tile = new Tile(w, l);
                 // tile.setHeight(l + w); // obviously change this later
                 this.add(tile);
                 

@@ -28,9 +28,16 @@ export default class TerrainBrushTool extends Tool {
         if (foundList.length < 1) return;
 
         const tile = foundList[0].object;
-        if (this._lastTileId !== tile.uuid) {
-            this._lastTileId = tile.uuid;
-            tile.addHeight(1);
-        }
+        if (this._lastTileId === tile.uuid)
+            return;
+        this._lastTileId = tile.uuid;
+
+        tile.getNeighbour( 0,  1)?.addHeight(1);
+        tile.getNeighbour( 0, -1)?.addHeight(1);
+        tile.getNeighbour( 1,  0)?.addHeight(1);
+        tile.getNeighbour(-1,  0)?.addHeight(1);
+        tile.addHeight(1);
+
+        args.resetMoveDistance();
     }
 }
