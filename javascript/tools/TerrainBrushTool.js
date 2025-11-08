@@ -3,7 +3,7 @@ import Tool from '../supers/Tool.js';
 export default class TerrainBrushTool extends Tool {
     _lastTileId = null;
     constructor() {
-        super('terrain-brush');
+        super('terrain-brush', 't');
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
@@ -18,10 +18,11 @@ export default class TerrainBrushTool extends Tool {
         this.paint(args);
     }
     onUp(args) {
-        this.paint(args);
+        this._lastTileId = null;
     }
     onClick(args) {
         this.paint(args);
+        this._lastTileId = null;
     }
     paint(args) {
         const foundList = args.castRay(args.tileList);

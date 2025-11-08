@@ -2,7 +2,7 @@ import Tool from '../supers/Tool.js';
 
 export default class InteractTool extends Tool {
     constructor() {
-        super('interact');
+        super('interact', 'i');
     }
     onDown(args) {
         // console.log('Interact down:', args);

@@ -28,8 +28,8 @@ export default class Tile extends THREE.Mesh {
         let rawUv = new Array();
         
         // find 4 corners for this tile
-        let numHelperX = (this._locX * tileWidth) - (tileWidth / 2);
-        let numHelperY = (this._locY * tileWidth) - (tileWidth / 2);
+        let numHelperX = -(tileWidth / 2);
+        let numHelperY = -(tileWidth / 2);
         const corners = [
             [ // topLeft
                 numHelperX + tileWidth,
@@ -71,8 +71,8 @@ export default class Tile extends THREE.Mesh {
             // if their height is more than or equal to mine: continue
             if (opponentHeight >= this.position.y) { continue; }
 
-            let minH = this.position.y - (tileRimHeight / 2);
-            let oppH = opponentHeight - (tileRimHeight / 2);
+            let minH = -(tileRimHeight / 2);
+            let oppH = opponentHeight - (tileRimHeight / 2) - this.position.y;
             addFace(
                 corners[side[2]][0], minH, corners[side[2]][1],
                 corners[side[2]][0], oppH, corners[side[2]][1],
@@ -92,14 +92,11 @@ export default class Tile extends THREE.Mesh {
                     color: 0x808080,
                 })
             );
-            walls.material.side = THREE.DoubleSide;
-            // walls.userData.motherTile = littleSquare;
+            // walls.material.side = THREE.DoubleSide;
             walls.castShadow = true;
             walls.receiveShadow = true;
             walls.userData.wall = true;
-            this.parent.add(walls);
-            // this._groundANDwallTiles1D.push(walls);
-            // littleSquare.userData.wallMesh = walls;
+            this.add(walls);
         }
     }
     getNeighbour(offsetX, offsetY) {
