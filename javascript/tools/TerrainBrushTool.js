@@ -1,9 +1,11 @@
 import Tool from '../supers/Tool.js';
 
 export default class TerrainBrushTool extends Tool {
+    _diameter = 2;
     _lastTileId = null;
     constructor() {
         super('terrain-brush', 't');
+        getCircleFill(this._diameter);
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
@@ -33,13 +35,68 @@ export default class TerrainBrushTool extends Tool {
             return;
         this._lastTileId = tile.uuid;
 
-        tile.getNeighbour( 0,  1)?.modifyHeight(1, false);
-        tile.getNeighbour( 0, -1)?.modifyHeight(1, false);
-        tile.getNeighbour( 1,  0)?.modifyHeight(1, false);
-        tile.getNeighbour(-1,  0)?.modifyHeight(1, false);
-        tile.modifyHeight(1);
+        getCircleFill(this._diameter).forEach(([x, y]) =>
+            tile.getNeighbour(x, y)?.modifyHeight(1, false)
+        );
         tile.parent.reRender();
 
         args.resetMoveDistance();
     }
 }
+
+
+const getCircleFill = (diameter) => {
+    let output = [];
+    circleLayersLookup.slice(0, diameter).forEach(layer => {
+        output.push(...layer);
+    });
+    return output;
+};
+
+const circleLayersLookup = [
+    [
+        [0,0]
+    ],
+    [
+        [1,1],
+        [1,0],
+        [1,-1],
+        [0,-1],
+        [-1,-1],
+        [-1,0],
+        [-1,1],
+        [0,1]
+    ],
+    [
+        [1,2],
+        [2,1],
+        [2,0],
+        [2,-1],
+        [1,-2],
+        [0,-2],
+        [-1,-2],
+        [-2,-1],
+        [-2,0],
+        [-2,1],
+        [-1,2],
+        [0,2]
+    ],
+    [
+        [0,3],
+        [1,3],
+        [2,2],
+        [3,1],
+        [3,0],
+        [3,-1],
+        [2,-2],
+        [1,-3],
+        [0,-3],
+        [-1,-3],
+        [-2,-2],
+        [-3,-1],
+        [-3,0],
+        [-3,1],
+        [-2,2],
+        [-1,3]
+    ]
+]
