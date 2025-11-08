@@ -7,7 +7,7 @@ export default class Tile extends THREE.Mesh {
         super(
             BoxNoBottomGeometry(tileWidth, tileRimHeight, tileWidth),
             new THREE.MeshStandardMaterial({
-                color: 0x808080,
+                color: 0x069937,
             })
         );
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
@@ -16,7 +16,7 @@ export default class Tile extends THREE.Mesh {
         this._locY = locY;
         this.setHeight(0);
     }
-    #makeWalls() {
+    #makeWalls(updateNeighbours=true) {
         if (this.position.y == 0)
             return;
 
@@ -89,7 +89,7 @@ export default class Tile extends THREE.Mesh {
             let walls = new THREE.Mesh(
                 geometry,
                 new THREE.MeshStandardMaterial({
-                    color: 0x808080,
+                    color: 0x57360b,
                 })
             );
             // walls.material.side = THREE.DoubleSide;
@@ -97,21 +97,32 @@ export default class Tile extends THREE.Mesh {
             walls.receiveShadow = true;
             walls.userData.wall = true;
             this.add(walls);
+
+            // update surrounding tiles' walls
+            if (updateNeighbours)
+                this.getSurroundingNeighbours().forEach(t => t.#makeWalls(false));
         }
     }
     getNeighbour(offsetX, offsetY) {
         let x = this._locX + offsetX;
         let y = this._locY + offsetY;
         let halfWidth = chunkWidthInTiles / 2;
-        console.log('halfWidth', halfWidth);
-        
 
         if (x < -halfWidth || x >= halfWidth || y < -halfWidth || y >= halfWidth)
             return console.log('Tile out of bounds of this chunk', x, y);
         
         let found = this.parent.children.find(t => t._locX == x && t._locY == y);
-        console.log('found Neighbour', x, y, found);
+        // console.log('found Neighbour', x, y, found);
         return found;
+    }
+    getSurroundingNeighbours() {
+        let output = [];
+        const addIfExists = (x) => x ? output.push(x) : null;
+        addIfExists(this.getNeighbour( 1, 0));
+        addIfExists(this.getNeighbour(-1, 0));
+        addIfExists(this.getNeighbour( 0, 1));
+        addIfExists(this.getNeighbour( 0,-1));
+        return output;
     }
     addHeight(height) {
         this.position.y += height * tileHeightStep;

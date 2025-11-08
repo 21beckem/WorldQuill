@@ -12,7 +12,7 @@ export default class TerrainBrushTool extends Tool {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
     }
     onDown(args) {
-        this.paint(args);
+        // this.paint(args);
     }
     onMove(args) {
         this.paint(args);
