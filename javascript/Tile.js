@@ -16,7 +16,7 @@ export default class Tile extends THREE.Mesh {
         this._locY = locY;
         this.setHeight(0);
     }
-    #makeWalls(updateNeighbours=true) {
+    makeWalls() {
         if (this.position.y == 0)
             return;
 
@@ -97,10 +97,6 @@ export default class Tile extends THREE.Mesh {
             walls.receiveShadow = true;
             walls.userData.wall = true;
             this.add(walls);
-
-            // update surrounding tiles' walls
-            if (updateNeighbours)
-                this.getSurroundingNeighbours().forEach(t => t.#makeWalls(false));
         }
     }
     getNeighbour(offsetX, offsetY) {
@@ -115,22 +111,14 @@ export default class Tile extends THREE.Mesh {
         // console.log('found Neighbour', x, y, found);
         return found;
     }
-    getSurroundingNeighbours() {
-        let output = [];
-        const addIfExists = (x) => x ? output.push(x) : null;
-        addIfExists(this.getNeighbour( 1, 0));
-        addIfExists(this.getNeighbour(-1, 0));
-        addIfExists(this.getNeighbour( 0, 1));
-        addIfExists(this.getNeighbour( 0,-1));
-        return output;
+    modifyHeight() {
+        arguments[0] = (this.position.y + (arguments[0] * tileHeightStep)) / tileHeightStep;
+        this.setHeight(...arguments);
     }
-    addHeight(height) {
-        this.position.y += height * tileHeightStep;
-        this.#makeWalls();
-    }
-    setHeight(height) {
+    setHeight(height, updateChunk=true) {
         this.position.y = height * tileHeightStep;
-        this.#makeWalls();
+        if (updateChunk)
+            this.parent?.reRender();
     }
 }
 

@@ -30,6 +30,9 @@ export default class Chunk extends THREE.Group {
             }
         }
     }
+    reRender() {
+        this.children.forEach(tile => tile.makeWalls());
+    }
     move(x, y) {
         this._location = [x, y];
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);

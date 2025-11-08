@@ -33,11 +33,12 @@ export default class TerrainBrushTool extends Tool {
             return;
         this._lastTileId = tile.uuid;
 
-        tile.getNeighbour( 0,  1)?.addHeight(1);
-        tile.getNeighbour( 0, -1)?.addHeight(1);
-        tile.getNeighbour( 1,  0)?.addHeight(1);
-        tile.getNeighbour(-1,  0)?.addHeight(1);
-        tile.addHeight(1);
+        tile.getNeighbour( 0,  1)?.modifyHeight(1, false);
+        tile.getNeighbour( 0, -1)?.modifyHeight(1, false);
+        tile.getNeighbour( 1,  0)?.modifyHeight(1, false);
+        tile.getNeighbour(-1,  0)?.modifyHeight(1, false);
+        tile.modifyHeight(1);
+        tile.parent.reRender();
 
         args.resetMoveDistance();
     }
