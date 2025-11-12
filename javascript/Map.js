@@ -24,7 +24,7 @@ export default class Map extends THREE.Group {
         this.addChunk(0,1);
         this.addChunk(1,1);
     }
-    #checkifChunkExists(x, y) {
+    checkifChunkExists(x, y) {
         return this.children.some(chunk => chunk._location.x == x && chunk._location.y == y);
     }
     #updateHelpers() {
@@ -34,7 +34,7 @@ export default class Map extends THREE.Group {
         this.helpers.allTilesAndWalls = this.helpers.allTiles.concat(this.helpers.allWalls);
     }
     addChunk(x, y) {
-        if (this.#checkifChunkExists(x, y)) return alert('Chunk already exists');
+        if (this.checkifChunkExists(x, y)) return alert('Chunk already exists');
         let newChunk = new Chunk(x, y);
         this.helpers.allTiles.push(...newChunk.children);
         this.add(newChunk);

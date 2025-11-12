@@ -4,18 +4,18 @@ import { WorldQuill } from '../WorldQuill.js';
 import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
 
 export default class ChunkTool extends Tool {
-    _nonSelectedOpacity = 0.7;
-    _currentlyHoveringOverChunk = null;
-    _currentlySelectedChunk = null;
-    _fakeChunks = [];
-    
     constructor() {
         super('chunk', 'c');
     }
     onActivate(args) {
-        this.#unselectChunk();
+        this._nonSelectedOpacity = 0.7;
+        this._currentlyHoveringOverChunk = null;
+        this._currentlySelectedChunk = null;
+        this._currentlyDraggingChunk = null;
+        this._newPositionChunkAfterDrag = null;
+        this._fakeChunks = [];
         this.#makeFakeChunksAtNewPositions();
-        WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
+        this.#unselectChunk();
     }
     onDeactivate() {
         this.#unselectChunk();
@@ -37,11 +37,25 @@ export default class ChunkTool extends Tool {
         if (!chunk || chunk.id !== this._currentlySelectedChunk.id) return;
 
         // starting to drag selected chunk
+        this._currentlyDraggingChunk = chunk;
         WorldQuill.ThreeJsWorld._controls.enabled = false;
         console.log('starting to drag selected chunk!');
     }
     onMove(args) {
-        // console.log('Interact move:', args);
+        // if not currently dragging a chunk, do nothing
+        if (!this._currentlyDraggingChunk) return;
+        
+        // reset opacity on any previously hovered chunk
+        this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
+        
+        // get current chunk hovering over
+        const chunk = this.#getRaycastedChunk(args, true);
+        if (!chunk) return;
+        this._currentlyHoveringOverChunk = chunk;
+
+        // highlight this chunk
+        chunk.setOpacity(1);
+        this._newPositionChunkAfterDrag = chunk;
     }
     onHoverMove(args) {
         // if currently selected a chunk, do nothing
@@ -59,15 +73,24 @@ export default class ChunkTool extends Tool {
     }
     onUp(args) {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
+
+        // if was dragging a chunk, move it
+        this.#moveChunkToNewPosition();
     }
     onClick(args) {
+        console.log('click');
+        
         this.#unselectChunk();
         if (this._currentlyHoveringOverChunk) {
             this.#setSelectedChunk(this._currentlyHoveringOverChunk);
         }
     }
-    #getRaycastedChunk(args) {
-        const foundList = args.castRay(this._fakeChunks.concat(WorldQuill.Map.helpers.allTilesAndWalls));
+    #getRaycastedChunk(args, includeFakeChunks=false) {
+        let searchArr = WorldQuill.Map.helpers.allTilesAndWalls;
+        if (includeFakeChunks)
+            searchArr.push(...this._fakeChunks);
+
+        const foundList = args.castRay(searchArr);
         if (foundList.length < 1) return;
         return foundList[0].object.chunk;
     }
@@ -83,6 +106,7 @@ export default class ChunkTool extends Tool {
                 });
             this._currentlySelectedChunk = null;
         }
+        WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
     }
     #setSelectedChunk(chunk) {
         this._currentlySelectedChunk = chunk;
@@ -91,10 +115,21 @@ export default class ChunkTool extends Tool {
         this.#createOutline(chunk, false);
     }
 
+    #moveChunkToNewPosition() {
+        if (this._currentlyDraggingChunk) {
+            console.log('moving...');
+            this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
+            this.onDeactivate();
+            this.onActivate();
+        }
+    }
+
     #createOutline(chunk) {
+        return;
         const outln = this.#generateFakeChunkMeshAt(0, tileRimHeight/2, 0, {
             type: 'LineSegments',
-            color: 0x0000ff
+            color: 0x0000ff,
+            isFakeChunk: chunk.thisIsNotARealChunk
         });
         outln.thisIsAnOutline = true;
         chunk.add(outln);
@@ -102,6 +137,8 @@ export default class ChunkTool extends Tool {
 
 
     #makeFakeChunksAtNewPositions() {
+        console.log(this.#getPositionsOfPossibleNewChunks());
+        
         this.#getPositionsOfPossibleNewChunks().forEach(this.#generateFakeChunk.bind(this));
     }
     #getPositionsOfPossibleNewChunks() {
@@ -113,13 +150,20 @@ export default class ChunkTool extends Tool {
 
         // loop over all chunks and generate list of possible new chunks
         const possibleNewChunks = [];
+        const possibleNewChunksStrs = [];
+        function addPossibleLocation(x, y) {
+            if (!chunks[`${x},${y}`] && !possibleNewChunksStrs.includes(`${x},${y}`)) {
+                possibleNewChunks.push(new THREE.Vector2(x, y));
+                possibleNewChunksStrs.push(`${x},${y}`);
+            }
+        }
         WorldQuill.Map.children.forEach(chunk => {
             const x = chunk._location.x;
             const y = chunk._location.y;
-            if (!chunks[`${x+1},${y}`]) possibleNewChunks.push(new THREE.Vector2(x+1, y));
-            if (!chunks[`${x},${y+1}`]) possibleNewChunks.push(new THREE.Vector2(x, y+1));
-            if (!chunks[`${x-1},${y}`]) possibleNewChunks.push(new THREE.Vector2(x-1, y));
-            if (!chunks[`${x},${y-1}`]) possibleNewChunks.push(new THREE.Vector2(x, y-1));
+            addPossibleLocation(x+1, y);
+            addPossibleLocation(x, y+1);
+            addPossibleLocation(x-1, y);
+            addPossibleLocation(x, y-1);
         });
         return possibleNewChunks;
     }
@@ -133,7 +177,9 @@ export default class ChunkTool extends Tool {
                 side: THREE.DoubleSide
             })
         );
-        plane.rotation.x = Math.PI / 2;
+
+        if (!options.isFakeChunk)
+            plane.rotation.x = Math.PI / 2;
         plane.position.set(
             x - (tileWidth / 2),
             y,
@@ -148,19 +194,22 @@ export default class ChunkTool extends Tool {
             0,
             pos.y * tileWidth * chunkWidthInTiles,
             {
-                color: 0xd4d4d4
+                color: 0xb8bfb8
             }
         );
         newFake.setOpacity = (opacity) => {
             newFake.material.transparent = (opacity !== 1.0);
-            newFake.material.opacity = opacity
+            newFake.material.opacity = (opacity !== 1.0) ? opacity/2 : opacity;
         };
         newFake.chunk = newFake;
+        newFake._location = new THREE.Vector2(pos.x, pos.y);
         this._fakeChunks.push(newFake);
         
         WorldQuill.Map.add(newFake);
     }
     #removeFakeChunks() {
+        console.log('fakeChunks', this._fakeChunks);
+        
         this._fakeChunks.forEach(fake => WorldQuill.Map.remove(fake));
         this._fakeChunks = [];
     }

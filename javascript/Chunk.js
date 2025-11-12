@@ -1,6 +1,7 @@
 import * as THREE from './supers/three.module.min.js';
 import Tile from './Tile.js';
 import { tileWidth, chunkWidthInTiles } from './constants.js';
+import { WorldQuill } from './WorldQuill.js';
 // import { Serializable } from './supers/Serializable.js';
 
 export default class Chunk extends THREE.Group {
@@ -35,6 +36,7 @@ export default class Chunk extends THREE.Group {
         this.children.forEach(tile => tile.makeWalls());
     }
     move(x, y) {
+        // if (this.parent?.checkifChunkExists(x, y)) return alert('Chunk already exists');
         this._location = new THREE.Vector2(x, y);
         this._locationStr = `${x},${y}`;
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
