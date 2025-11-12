@@ -36,6 +36,7 @@ export default class Chunk extends THREE.Group {
     }
     move(x, y) {
         this._location = new THREE.Vector2(x, y);
+        this._locationStr = `${x},${y}`;
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
     }
     setOpacity(opacity) {

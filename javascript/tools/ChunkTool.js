@@ -13,11 +13,17 @@ export default class ChunkTool extends Tool {
     }
     onActivate(args) {
         this.#unselectChunk();
-        WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(this._nonSelectedOpacity));
+        WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
+        this.#makeFakeChunksAtNewPositions();
     }
     onDeactivate() {
         this.#unselectChunk();
-        WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(1));
+
+        // remove all fake chunks
+        WorldQuill.Map.children.filter(c => c.thisIsNotARealChunk).forEach(c => WorldQuill.Map.remove(c));
+
+        // reset opacity
+        WorldQuill.Map.children.forEach(c => c.setOpacity(1));
     }
     onDown(args) {
         // if no selected chunk, do nothing
@@ -85,26 +91,66 @@ export default class ChunkTool extends Tool {
     }
 
     #createOutline(chunk) {
-        const absoluteW = tileWidth*chunkWidthInTiles;
-
-        // Create the line segments object
-        const outln = new THREE.LineSegments(
-            new THREE.EdgesGeometry(
-                new THREE.PlaneGeometry( absoluteW, absoluteW, 1, 1 )
-            ),
-            new THREE.LineBasicMaterial( { color: 0x0000ff } )
-        );
-        outln.rotation.x = Math.PI / 2;
-        outln.renderOrder = 1;
-        outln.material.linewidth = 20;
-        outln.position.set(
-            outln.position.x - (tileWidth / 2),
-            tileRimHeight / 2,
-            outln.position.z - (tileWidth / 2)
-        );
-        console.log(outln);
-        
+        const outln = this.#generateFakeChunkAt(0, tileRimHeight/2, 0, {
+            type: 'LineSegments',
+            color: 0x0000ff
+        });
         outln.thisIsAnOutline = true;
         chunk.add(outln);
+    }
+
+
+    #makeFakeChunksAtNewPositions() {
+        this.#getPositionsOfPossibleNewChunks().forEach(pos => {
+            let newFake = this.#generateFakeChunkAt(
+                pos.x * tileWidth * chunkWidthInTiles,
+                0,
+                pos.y * tileWidth * chunkWidthInTiles,
+                {
+                    color: 0xd4d4d4
+                }
+            );
+            console.log(newFake);
+            
+            WorldQuill.Map.add(newFake);
+        });
+    }
+    #getPositionsOfPossibleNewChunks() {
+        // create lookup table of all chunks based on location
+        const chunks = {};
+        WorldQuill.Map.children.forEach(chunk => {
+            chunks[chunk._locationStr] = true;
+        });
+
+        // loop over all chunks and generate list of possible new chunks
+        const possibleNewChunks = [];
+        WorldQuill.Map.children.forEach(chunk => {
+            const x = chunk._location.x;
+            const y = chunk._location.y;
+            if (!chunks[`${x+1},${y}`]) possibleNewChunks.push(new THREE.Vector2(x+1, y));
+            if (!chunks[`${x},${y+1}`]) possibleNewChunks.push(new THREE.Vector2(x, y+1));
+            if (!chunks[`${x-1},${y}`]) possibleNewChunks.push(new THREE.Vector2(x-1, y));
+            if (!chunks[`${x},${y-1}`]) possibleNewChunks.push(new THREE.Vector2(x, y-1));
+        });
+        return possibleNewChunks;
+    }
+    #generateFakeChunkAt(x, y, z, options={}) {
+        const absoluteW = tileWidth*chunkWidthInTiles;
+        const type = options.type || 'Mesh';
+        const plane = new THREE[type](
+            new THREE.PlaneGeometry(absoluteW, absoluteW),
+            new THREE.MeshBasicMaterial({ 
+                color: options.color || 0x0000ff,
+                side: THREE.DoubleSide
+            })
+        );
+        plane.rotation.x = Math.PI / 2;
+        plane.position.set(
+            x - (tileWidth / 2),
+            y,
+            z - (tileWidth / 2)
+        );
+        plane.thisIsNotARealChunk = true;
+        return plane;
     }
 }
