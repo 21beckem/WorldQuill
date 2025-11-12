@@ -7,20 +7,21 @@ export default class ChunkTool extends Tool {
     _nonSelectedOpacity = 0.7;
     _currentlyHoveringOverChunk = null;
     _currentlySelectedChunk = null;
+    _fakeChunks = [];
     
     constructor() {
         super('chunk', 'c');
     }
     onActivate(args) {
         this.#unselectChunk();
-        WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
         this.#makeFakeChunksAtNewPositions();
+        WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
     }
     onDeactivate() {
         this.#unselectChunk();
 
         // remove all fake chunks
-        WorldQuill.Map.children.filter(c => c.thisIsNotARealChunk).forEach(c => WorldQuill.Map.remove(c));
+        this.#removeFakeChunks();
 
         // reset opacity
         WorldQuill.Map.children.forEach(c => c.setOpacity(1));
@@ -66,7 +67,7 @@ export default class ChunkTool extends Tool {
         }
     }
     #getRaycastedChunk(args) {
-        const foundList = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
+        const foundList = args.castRay(this._fakeChunks.concat(WorldQuill.Map.helpers.allTilesAndWalls));
         if (foundList.length < 1) return;
         return foundList[0].object.chunk;
     }
@@ -91,7 +92,7 @@ export default class ChunkTool extends Tool {
     }
 
     #createOutline(chunk) {
-        const outln = this.#generateFakeChunkAt(0, tileRimHeight/2, 0, {
+        const outln = this.#generateFakeChunkMeshAt(0, tileRimHeight/2, 0, {
             type: 'LineSegments',
             color: 0x0000ff
         });
@@ -101,19 +102,7 @@ export default class ChunkTool extends Tool {
 
 
     #makeFakeChunksAtNewPositions() {
-        this.#getPositionsOfPossibleNewChunks().forEach(pos => {
-            let newFake = this.#generateFakeChunkAt(
-                pos.x * tileWidth * chunkWidthInTiles,
-                0,
-                pos.y * tileWidth * chunkWidthInTiles,
-                {
-                    color: 0xd4d4d4
-                }
-            );
-            console.log(newFake);
-            
-            WorldQuill.Map.add(newFake);
-        });
+        this.#getPositionsOfPossibleNewChunks().forEach(this.#generateFakeChunk.bind(this));
     }
     #getPositionsOfPossibleNewChunks() {
         // create lookup table of all chunks based on location
@@ -134,7 +123,7 @@ export default class ChunkTool extends Tool {
         });
         return possibleNewChunks;
     }
-    #generateFakeChunkAt(x, y, z, options={}) {
+    #generateFakeChunkMeshAt(x, y, z, options={}) {
         const absoluteW = tileWidth*chunkWidthInTiles;
         const type = options.type || 'Mesh';
         const plane = new THREE[type](
@@ -152,5 +141,27 @@ export default class ChunkTool extends Tool {
         );
         plane.thisIsNotARealChunk = true;
         return plane;
+    }
+    #generateFakeChunk(pos){
+        let newFake = this.#generateFakeChunkMeshAt(
+            pos.x * tileWidth * chunkWidthInTiles,
+            0,
+            pos.y * tileWidth * chunkWidthInTiles,
+            {
+                color: 0xd4d4d4
+            }
+        );
+        newFake.setOpacity = (opacity) => {
+            newFake.material.transparent = (opacity !== 1.0);
+            newFake.material.opacity = opacity
+        };
+        newFake.chunk = newFake;
+        this._fakeChunks.push(newFake);
+        
+        WorldQuill.Map.add(newFake);
+    }
+    #removeFakeChunks() {
+        this._fakeChunks.forEach(fake => WorldQuill.Map.remove(fake));
+        this._fakeChunks = [];
     }
 }
