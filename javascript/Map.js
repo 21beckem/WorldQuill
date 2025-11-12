@@ -30,8 +30,8 @@ export default class Map extends THREE.Group {
     #updateHelpers() {
         this.helpers.allTiles = this.children.flatMap(chunk => chunk.children);
         this.helpers.allWalls = this.children.flatMap(chunk => chunk.children.flatMap(tile => tile.children));
-        this.helpers.allEntities = this.children.flatMap(chunk => chunk.children.flatMap(tile => tile.children.flatMap(wall => wall.children)));
-        this.helpers.allTilesAndWalls = this.children.flatMap(chunk => chunk.children.flatMap(tile => [...tile.children, ...tile.children.flatMap(wall => wall.children)]));
+        this.helpers.allEntities = this.children.flatMap(chunk => chunk._entities);
+        this.helpers.allTilesAndWalls = this.helpers.allTiles.concat(this.helpers.allWalls);
     }
     addChunk(x, y) {
         if (this.#checkifChunkExists(x, y)) return alert('Chunk already exists');

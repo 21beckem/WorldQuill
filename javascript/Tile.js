@@ -11,6 +11,7 @@ export default class Tile extends THREE.Mesh {
             })
         );
         this.parent = parent;
+        this.chunk = parent;
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
         this._absoluteLoc = new THREE.Vector2(

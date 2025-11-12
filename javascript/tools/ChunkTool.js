@@ -8,13 +8,11 @@ export default class ChunkTool extends Tool {
     _currentlyHoveringOverChunk = null;
     _currentlySelectedChunk = null;
     
-    _listOfTilesANDwalls = [];
     constructor() {
         super('chunk', 'c');
     }
     onActivate(args) {
         this.#unselectChunk();
-        this.#updateListOfTilesAndWalls(args.tileList);
         WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(this._nonSelectedOpacity));
     }
     onDeactivate() {
@@ -35,10 +33,10 @@ export default class ChunkTool extends Tool {
         this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
 
         // get this chunk if we're hovering over it
-        const foundList = args.castRay(this._listOfTilesANDwalls);
+        const foundList = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
         if (foundList.length < 1) return;
         const chunk = foundList[0].object.chunk;
-
+        
         // highlight this chunk
         this._currentlyHoveringOverChunk = chunk;
         chunk.setOpacity(1);
@@ -54,14 +52,6 @@ export default class ChunkTool extends Tool {
     }
 
 
-
-    #updateListOfTilesAndWalls(tileList) {
-        this._listOfTilesANDwalls = [];
-        tileList.forEach(tile => {
-            this._listOfTilesANDwalls.push(tile);
-            this._listOfTilesANDwalls.push(...tile.children);
-        });
-    }
     #unselectChunk() {
         if (this._currentlySelectedChunk) {
             this._currentlySelectedChunk.setOpacity(this._nonSelectedOpacity);

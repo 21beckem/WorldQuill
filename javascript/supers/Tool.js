@@ -9,6 +9,7 @@ export default class Tool {
             this.registerHotkey(activateHotkey);
     }
     activate(){
+        WorldQuill.Map.helpers.update();
         WorldQuill.ThreeJsWorld._raycaster.setMode(this.mode);
     }
     registerHotkey(keychar) {
