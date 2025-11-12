@@ -20,7 +20,18 @@ export default class ChunkTool extends Tool {
         WorldQuill.Map.children.forEach(chunk => chunk.setOpacity(1));
     }
     onDown(args) {
-        // console.log('Interact down:', args);
+        // if no selected chunk, do nothing
+        if (!this._currentlySelectedChunk) return;
+
+        // get the chunk I'm pointing at
+        const chunk = this.#getRaycastedChunk(args);
+        
+        // if I'm pointing at the selected chunk...
+        if (!chunk || chunk.id !== this._currentlySelectedChunk.id) return;
+
+        // starting to drag selected chunk
+        WorldQuill.ThreeJsWorld._controls.enabled = false;
+        console.log('starting to drag selected chunk!');
     }
     onMove(args) {
         // console.log('Interact move:', args);
@@ -33,22 +44,25 @@ export default class ChunkTool extends Tool {
         this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
 
         // get this chunk if we're hovering over it
-        const foundList = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
-        if (foundList.length < 1) return;
-        const chunk = foundList[0].object.chunk;
-        
+        const chunk = this.#getRaycastedChunk(args);
+        if (!chunk) return;
         // highlight this chunk
         this._currentlyHoveringOverChunk = chunk;
         chunk.setOpacity(1);
     }
     onUp(args) {
-        // console.log('Interact up:', args);
+        WorldQuill.ThreeJsWorld._controls.enabled = true;
     }
     onClick(args) {
         this.#unselectChunk();
         if (this._currentlyHoveringOverChunk) {
             this.#setSelectedChunk(this._currentlyHoveringOverChunk);
         }
+    }
+    #getRaycastedChunk(args) {
+        const foundList = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
+        if (foundList.length < 1) return;
+        return foundList[0].object.chunk;
     }
 
 

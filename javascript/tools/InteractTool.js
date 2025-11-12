@@ -1,4 +1,5 @@
 import Tool from '../supers/Tool.js';
+import { WorldQuill } from '../WorldQuill.js';
 
 export default class InteractTool extends Tool {
     constructor() {
@@ -14,7 +15,7 @@ export default class InteractTool extends Tool {
         // console.log('Interact up:', args);
     }
     onClick(args) {
-        const found = args.castRay( [...args.tileList, ...args.entityHitboxList] );
+        const found = args.castRay( [...WorldQuill.Map.helpers.allTiles, ...WorldQuill.Map.helpers.allEntities] );
         console.log('Interact click:', args, 'Found:', found);
     }
 }

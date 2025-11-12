@@ -82,8 +82,6 @@ export default class Raycaster {
     #makeReturnObj() {
         return {
             raycaster: this._raycaster,
-            tileList: this._flatListOfTiles,
-            entityHitboxList: this._flatListOfEntityHitboxes,
             // clickOrigin: this._clickMouse,
             // currentMousePosition: this._moveMouse,
             castRay: this.castFunction.bind(this),

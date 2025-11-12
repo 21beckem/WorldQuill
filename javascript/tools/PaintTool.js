@@ -24,7 +24,7 @@ export default class PaintTool extends Tool {
         this.paint(args);
     }
     paint(args) {
-        const found = args.castRay(args.tileList);
+        const found = args.castRay(WorldQuill.Map.helpers.allTiles);
         if (found.length < 1) return;
         found[0].object.material.color = new THREE.Color('#42f557');
     }

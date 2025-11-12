@@ -27,7 +27,7 @@ export default class TerrainBrushTool extends Tool {
         this._lastTileId = null;
     }
     paint(args) {
-        const foundList = args.castRay(args.tileList);
+        const foundList = args.castRay(WorldQuill.Map.helpers.allTiles);
         if (foundList.length < 1) return;
 
         const tile = foundList[0].object;
