@@ -10,12 +10,14 @@ export default class Tile extends THREE.Mesh {
                 color: 0x069937,
             })
         );
+        this.parent = parent;
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
-        this._locX = locX;
-        this._locY = locY;
+        this._absoluteLoc = new THREE.Vector2(
+            locX + (chunkWidthInTiles * parent._location.x),
+            locY + (chunkWidthInTiles * parent._location.y)
+        );
         this.setHeight(0);
-        this.chunk = parent;
     }
     makeWalls() {
         if (this.position.y == 0)
@@ -102,14 +104,10 @@ export default class Tile extends THREE.Mesh {
         }
     }
     getNeighbour(offsetX, offsetY) {
-        let x = this._locX + offsetX;
-        let y = this._locY + offsetY;
-        let halfWidth = chunkWidthInTiles / 2;
+        let x = this._absoluteLoc.x + offsetX;
+        let y = this._absoluteLoc.y + offsetY;
 
-        if (x < -halfWidth || x >= halfWidth || y < -halfWidth || y >= halfWidth)
-            return console.log('Tile out of bounds of this chunk', x, y);
-        
-        let found = this.parent.children.find(t => t._locX == x && t._locY == y);
+        let found = WorldQuill.Map.helpers.allTiles.find(t => t._absoluteLoc.x == x && t._absoluteLoc.y == y);
         // console.log('found Neighbour', x, y, found);
         return found;
     }
@@ -120,7 +118,9 @@ export default class Tile extends THREE.Mesh {
     setHeight(height, updateChunk=true) {
         this.position.y = height * tileHeightStep;
         if (updateChunk)
-            this.parent?.reRender();
+            this.parent.reRender();
+        else
+            this.parent._needsReRender = true;
     }
 }
 

@@ -38,7 +38,7 @@ export default class TerrainBrushTool extends Tool {
         getCircleFill(this._diameter).forEach(([x, y]) =>
             tile.getNeighbour(x, y)?.modifyHeight(1, false)
         );
-        tile.parent.reRender();
+        WorldQuill.Map.reRender();
 
         args.resetMoveDistance();
     }

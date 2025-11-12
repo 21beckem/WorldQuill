@@ -1,5 +1,6 @@
 import * as THREE from './supers/three.module.min.js';
 import Chunk from './Chunk.js';
+import { WorldQuill } from './WorldQuill.js';
 // import { Serializable } from './supers/Serializable.js';
 
 export default class Map extends THREE.Group {
@@ -7,6 +8,13 @@ export default class Map extends THREE.Group {
         'uuid',
         'children'
     ];
+    helpers = {
+        allTiles: Array(),
+        allWalls: Array(),
+        allEntities: Array(),
+        allTilesAndWalls: Array(),
+        update: this.#updateHelpers.bind(this)
+    }
     constructor() {
         super();
         WorldQuill.ThreeJsWorld._scene.add(this);
@@ -17,10 +25,21 @@ export default class Map extends THREE.Group {
         this.addChunk(1,1);
     }
     #checkifChunkExists(x, y) {
-        return this.children.some(chunk => chunk._location[0] == x && chunk._location[1] == y);
+        return this.children.some(chunk => chunk._location.x == x && chunk._location.y == y);
+    }
+    #updateHelpers() {
+        this.helpers.allTiles = this.children.flatMap(chunk => chunk.children);
+        this.helpers.allWalls = this.children.flatMap(chunk => chunk.children.flatMap(tile => tile.children));
+        this.helpers.allEntities = this.children.flatMap(chunk => chunk.children.flatMap(tile => tile.children.flatMap(wall => wall.children)));
+        this.helpers.allTilesAndWalls = this.children.flatMap(chunk => chunk.children.flatMap(tile => [...tile.children, ...tile.children.flatMap(wall => wall.children)]));
     }
     addChunk(x, y) {
         if (this.#checkifChunkExists(x, y)) return alert('Chunk already exists');
-        this.add(new Chunk(x, y));
+        let newChunk = new Chunk(x, y);
+        this.helpers.allTiles.push(...newChunk.children);
+        this.add(newChunk);
+    }
+    reRender() {
+        this.children.forEach(chunk => chunk._needsReRender && chunk.reRender());
     }
 }

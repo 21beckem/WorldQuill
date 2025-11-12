@@ -12,6 +12,7 @@ export default class Chunk extends THREE.Group {
     ];
     _location = new THREE.Vector2();
     _entities = Array();
+    _needsReRender = false;
     constructor(x, y) {
         super();
         this.move(x, y);
@@ -34,7 +35,7 @@ export default class Chunk extends THREE.Group {
         this.children.forEach(tile => tile.makeWalls());
     }
     move(x, y) {
-        this._location = [x, y];
+        this._location = new THREE.Vector2(x, y);
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
     }
     setOpacity(opacity) {
