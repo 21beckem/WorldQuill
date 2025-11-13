@@ -6,12 +6,13 @@ export default class GeneralBrushTool extends Tool {
     }
     GeneralBrushTool_applyBrush(diameter, tile, applyMethod) {
         getCircleFill(diameter)
-            .map(([x, y]) => tile.getNeighbour(x, y))
+            .map(([x, y], index) => {
+                // if this is a wall, only paint the first tile
+                if (tile.userData.wall) return (index == 0) ? tile : false;
+                return tile.getNeighbour(x, y);
+            })
             .filter(tile => !!tile)
-            .forEach(tile => {
-                console.log(tile);
-                applyMethod(tile);
-            });
+            .forEach(applyMethod);
     }
 }
 

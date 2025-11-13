@@ -43,7 +43,6 @@ export default class ChunkTool extends Tool {
         // starting to drag selected chunk
         this._currentlyDraggingChunk = chunk;
         WorldQuill.ThreeJsWorld._controls.enabled = false;
-        console.log('starting to drag selected chunk!');
     }
     onMove(args) {
         // if not currently dragging a chunk, do nothing
@@ -83,8 +82,6 @@ export default class ChunkTool extends Tool {
         this.#moveChunkToNewPosition();
     }
     onClick(args) {
-        console.log('click');
-        
         this.#unselectChunk();
         if (this._currentlyHoveringOverChunk) {
             this.#setSelectedChunk(this._currentlyHoveringOverChunk);
@@ -130,7 +127,6 @@ export default class ChunkTool extends Tool {
 
     #moveChunkToNewPosition() {
         if (this._currentlyDraggingChunk) {
-            console.log('moving...');
             this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
         }
         this.activate();

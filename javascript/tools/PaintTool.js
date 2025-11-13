@@ -1,8 +1,8 @@
-import Tool from '../supers/Tool.js';
+import GeneralBrushTool from '../supers/GeneralBrushTool.js';
 import * as THREE from '../assets/three.module.min.js';
 import JSColor from "../assets/jscolor.js";
 
-export default class PaintTool extends Tool {
+export default class PaintTool extends GeneralBrushTool {
     _diameter = 2;
     _color = '#42f557';
     _subMode = 'paint';
@@ -42,7 +42,9 @@ export default class PaintTool extends Tool {
         if (this._inEyeDropperMode)
             this.setColor('#'+found[0].object.material.color.getHexString());
         else
-            found[0].object.material.color = new THREE.Color(this._color);
+            this.GeneralBrushTool_applyBrush(this._diameter, found[0].object, (tile) => {
+                tile.material.color = new THREE.Color(this._color)
+            });
     }
 
 
@@ -69,15 +71,15 @@ export default class PaintTool extends Tool {
                     content: '<i class="fa-solid fa-eye-dropper"></i>'
                 }]
             },
-            {
-                type: 'select',
-                attrs: [['onChange', this.setSubMode.bind(this)]],
-                options: [
-                    ['Paint Bush', 'paint', this._subMode=='paint'],
-                    ['Bucket Fill', 'bucket', this._subMode=='bucket']
-                ],
-                label: 'Mode'
-            },
+            // {
+            //     type: 'select',
+            //     attrs: [['onChange', this.setSubMode.bind(this)]],
+            //     options: [
+            //         ['Paint Bush', 'paint', this._subMode=='paint'],
+            //         ['Bucket Fill', 'bucket', this._subMode=='bucket']
+            //     ],
+            //     label: 'Mode'
+            // }
         ]);
         new JSColor('#'+this._UI_colorPickerId, {
             value: this._color

@@ -25,6 +25,7 @@ export default class Raycaster {
     }
     #setupPointerDown() {
         renderer.domElement.addEventListener('pointerdown', event => {
+            if (event.button !== 0) return;
             // console.log('down');
             this._mouseIsDown = true;
 			this._draggingMouseMovedYet = false;
@@ -51,6 +52,7 @@ export default class Raycaster {
     }
     #setupPointerUp() {
         renderer.domElement.addEventListener('pointerup', event => {
+            if (event.button !== 0) return;
             if (!this._mouseIsDown) return;
             // console.log('up');
             this.#doOnAllEvents(event);

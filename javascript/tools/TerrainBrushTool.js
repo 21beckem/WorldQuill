@@ -9,7 +9,6 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         this.label = 'Terrain';
         this.icon = 'fas fa-mountain';
         this.description = `This is how you add height to your world! Click and drag accross the terrain to raise and lower it.`;
-        getCircleFill(this._diameter);
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
@@ -39,71 +38,12 @@ export default class TerrainBrushTool extends GeneralBrushTool {
             return;
         this._lastTileId = tile.uuid;
 
-        this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) => tile.modifyHeight(1, false));
+        this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
+            tile.modifyHeight(1, false)
+        );
         
-
-        // getCircleFill(this._diameter).forEach(([x, y]) =>
-        //     tile.getNeighbour(x, y)?.modifyHeight(1, false)
-        // );
         WorldQuill.Map.reRender();
 
         args.resetMoveDistance();
     }
 }
-
-
-const getCircleFill = (diameter) => {
-    let output = [];
-    circleLayersLookup.slice(0, diameter).forEach(layer => {
-        output.push(...layer);
-    });
-    return output;
-};
-
-const circleLayersLookup = [
-    [
-        [0,0]
-    ],
-    [
-        [1,1],
-        [1,0],
-        [1,-1],
-        [0,-1],
-        [-1,-1],
-        [-1,0],
-        [-1,1],
-        [0,1]
-    ],
-    [
-        [1,2],
-        [2,1],
-        [2,0],
-        [2,-1],
-        [1,-2],
-        [0,-2],
-        [-1,-2],
-        [-2,-1],
-        [-2,0],
-        [-2,1],
-        [-1,2],
-        [0,2]
-    ],
-    [
-        [0,3],
-        [1,3],
-        [2,2],
-        [3,1],
-        [3,0],
-        [3,-1],
-        [2,-2],
-        [1,-3],
-        [0,-3],
-        [-1,-3],
-        [-2,-2],
-        [-3,-1],
-        [-3,0],
-        [-3,1],
-        [-2,2],
-        [-1,3]
-    ]
-]
