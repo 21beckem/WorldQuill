@@ -12,6 +12,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
+        this.setUiDetails();
     }
     onDeactivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
@@ -45,5 +46,23 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         WorldQuill.Map.reRender();
 
         args.resetMoveDistance();
+    }
+
+
+    // UI
+    setUiDetails() {
+        WorldQuill.PanelManager.setDetails([
+            {
+                type: 'range',
+                attrs: [
+                    ['min', 1], ['max', 4], ['step', 1], ['value', this._diameter],
+                    ['oninput', this.setBrushSize.bind(this)]
+                ],
+                label: 'Brush Size'
+            }
+        ]);
+    }
+    setBrushSize(e) {
+        this._diameter = e.target.value;
     }
 }

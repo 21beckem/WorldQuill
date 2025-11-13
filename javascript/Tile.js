@@ -12,6 +12,7 @@ export default class Tile extends THREE.Mesh {
         );
         this.parent = parent;
         this.chunk = parent;
+        this.wallColor = new THREE.Color(0x57360b);
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
         this._localLoc = new THREE.Vector2(locX, locY);
@@ -97,16 +98,23 @@ export default class Tile extends THREE.Mesh {
             let walls = new THREE.Mesh(
                 geometry,
                 new THREE.MeshStandardMaterial({
-                    color: 0x57360b,
+                    color: new THREE.Color(this.wallColor),
                 })
             );
             // walls.material.side = THREE.DoubleSide;
+            walls.setColor = (color) => {
+                this.wallColor = new THREE.Color(color);
+                walls.material.color = this.wallColor;
+            }
             walls.castShadow = true;
             walls.receiveShadow = true;
             walls.userData.wall = true;
             walls.chunk = this.parent;
             this.add(walls);
         }
+    }
+    setColor(color) {
+        this.material.color = new THREE.Color(color);
     }
     getNeighbour(offsetX, offsetY) {
         let x = this._absoluteLoc.x + offsetX;

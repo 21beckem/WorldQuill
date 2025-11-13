@@ -43,7 +43,7 @@ export default class PaintTool extends GeneralBrushTool {
             this.setColor('#'+found[0].object.material.color.getHexString());
         else
             this.GeneralBrushTool_applyBrush(this._diameter, found[0].object, (tile) => {
-                tile.material.color = new THREE.Color(this._color)
+                tile.setColor(this._color);
             });
     }
 
