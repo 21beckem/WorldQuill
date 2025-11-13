@@ -1,9 +1,11 @@
 import ThreeJsWorld from './supers/ThreeJsWorld.js';
+import PanelManager from './supers/PanelManager.js';
+import Map from './Map.js';
+
 import InteractTool from './tools/InteractTool.js';
 import PaintTool from './tools/PaintTool.js';
 import TerrainBrushTool from './tools/TerrainBrushTool.js';
 import ChunkTool from './tools/ChunkTool.js';
-import Map from './Map.js';
 
 class Tools extends Array {
     constructor() {
@@ -20,6 +22,7 @@ export class WorldQuill {
 
     static init(containerSelector='body') {
         this.ThreeJsWorld = new ThreeJsWorld(containerSelector);
+        this.PanelManager = new PanelManager(containerSelector);
 
         this.tools.push(new InteractTool());
         this.tools.push(new PaintTool());
