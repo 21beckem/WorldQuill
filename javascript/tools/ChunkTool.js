@@ -121,6 +121,7 @@ export default class ChunkTool extends Tool {
         if (this._currentlyDraggingChunk) {
             console.log('moving...');
             this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
+            WorldQuill.Map.reRender(true);
             this.onDeactivate();
             this.onActivate();
         }

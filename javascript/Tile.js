@@ -14,11 +14,15 @@ export default class Tile extends THREE.Mesh {
         this.chunk = parent;
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
-        this._absoluteLoc = new THREE.Vector2(
-            locX + (chunkWidthInTiles * parent._location.x),
-            locY + (chunkWidthInTiles * parent._location.y)
-        );
+        this._localLoc = new THREE.Vector2(locX, locY);
+        this.assignAbsoluteLocation();
         this.setHeight(0);
+    }
+    assignAbsoluteLocation() {
+        this._absoluteLoc = new THREE.Vector2(
+            this._localLoc.x + (chunkWidthInTiles * this.parent._location.x),
+            this._localLoc.y + (chunkWidthInTiles * this.parent._location.y)
+        );
     }
     makeWalls() {
         if (this.position.y == 0)

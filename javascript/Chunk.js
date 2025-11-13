@@ -33,7 +33,10 @@ export default class Chunk extends THREE.Group {
         }
     }
     reRender() {
-        this.children.forEach(tile => tile.makeWalls());
+        this.children.forEach(tile => {
+            tile.makeWalls();
+            tile.assignAbsoluteLocation();
+        });
     }
     move(x, y) {
         // if (this.parent?.checkifChunkExists(x, y)) return alert('Chunk already exists');

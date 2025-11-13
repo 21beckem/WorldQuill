@@ -39,7 +39,10 @@ export default class Map extends THREE.Group {
         this.helpers.allTiles.push(...newChunk.children);
         this.add(newChunk);
     }
-    reRender() {
-        this.children.forEach(chunk => chunk._needsReRender && chunk.reRender());
+    reRender(forceAll=false) {
+        if (forceAll)
+            this.children.forEach(chunk => !chunk.thisIsNotARealChunk && chunk.reRender());
+        else
+            this.children.forEach(chunk => !chunk.thisIsNotARealChunk && chunk._needsReRender && chunk.reRender());
     }
 }
