@@ -67,8 +67,9 @@ export default class ChunkTool extends Tool {
         this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
 
         // get this chunk if we're hovering over it
-        const chunk = this.#getRaycastedChunk(args);
+        const chunk = this.#getRaycastedChunk(args, true);
         if (!chunk) return;
+
         // highlight this chunk
         this._currentlyHoveringOverChunk = chunk;
         chunk.setOpacity(1);
@@ -111,20 +112,30 @@ export default class ChunkTool extends Tool {
         WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
     }
     #setSelectedChunk(chunk) {
-        this._currentlySelectedChunk = chunk;
-        this._currentlyHoveringOverChunk = null;
-        chunk.setOpacity(1);
-        this.#createOutline(chunk, false);
+        if (chunk.thisIsNotARealChunk) {
+            // if this is not a real chunk, make a new chunk here
+            WorldQuill.Map.addChunk(chunk._location.x, chunk._location.y);
+            this.#unselectChunk();
+            this.#moveChunkToNewPosition();
+        } else {
+            // if this is a real chunk, just select it
+            this._currentlySelectedChunk = chunk;
+            this._currentlyHoveringOverChunk = null;
+            chunk.setOpacity(1);
+            this.#createOutline(chunk, false);
+        }
     }
 
     #moveChunkToNewPosition() {
         if (this._currentlyDraggingChunk) {
             console.log('moving...');
             this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
-            WorldQuill.Map.reRender(true);
-            this.onDeactivate();
-            this.onActivate();
         }
+        this.activate();
+        this.activate();
+        WorldQuill.Map.reRender(true);
+        setTimeout(() =>  WorldQuill.Map.reRender(true), 100);
+        setTimeout(() =>  this.activate(), 200);
     }
 
     #createOutline(chunk) {
@@ -183,6 +194,7 @@ export default class ChunkTool extends Tool {
 
         if (!options.isFakeChunk)
             plane.rotation.x = Math.PI / 2;
+        
         plane.position.set(
             x - (tileWidth / 2),
             y,

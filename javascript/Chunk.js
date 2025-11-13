@@ -39,7 +39,7 @@ export default class Chunk extends THREE.Group {
         });
     }
     move(x, y) {
-        // if (this.parent?.checkifChunkExists(x, y)) return alert('Chunk already exists');
+        if (this.parent?.checkifChunkExists(x, y)) return alert('Chunk already exists');
         this._location = new THREE.Vector2(x, y);
         this._locationStr = `${x},${y}`;
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);

@@ -25,7 +25,9 @@ export default class Map extends THREE.Group {
         this.addChunk(1,1);
     }
     checkifChunkExists(x, y) {
-        return this.children.some(chunk => chunk._location.x == x && chunk._location.y == y);
+        console.log('checking if chunk exists:', x, y);
+        
+        return this.realChunks.some(chunk => chunk._location.x == x && chunk._location.y == y);
     }
     #updateHelpers() {
         this.helpers.allTiles = this.children.flatMap(chunk => chunk.children);
@@ -41,8 +43,11 @@ export default class Map extends THREE.Group {
     }
     reRender(forceAll=false) {
         if (forceAll)
-            this.children.forEach(chunk => !chunk.thisIsNotARealChunk && chunk.reRender());
+            this.realChunks.forEach(chunk => chunk.reRender());
         else
-            this.children.forEach(chunk => !chunk.thisIsNotARealChunk && chunk._needsReRender && chunk.reRender());
+            this.realChunks.forEach(chunk => chunk._needsReRender && chunk.reRender());
+    }
+    get realChunks() {
+        return this.children.filter(chunk => !chunk.thisIsNotARealChunk);
     }
 }
