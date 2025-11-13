@@ -12,8 +12,12 @@ html, body {
     </style>
 </head>
 <body>
-    <div style="box-sizing: border-box; width: 100vw; height: 100vh; overflow: hidden;" id="WorldQuillContainer"></div>
+    <div style="width: 100vw; height: 100vh;" id="WorldQuillContainer"></div>
     
-    <script src="/javascript/app.js" type="module"></script>
+
+    <script type="module">
+        import { WorldQuill } from './javascript/WorldQuill.js';
+        WorldQuill.init('#WorldQuillContainer');
+    </script>
 </body>
 </html>

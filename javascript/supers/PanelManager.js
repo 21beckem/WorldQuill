@@ -45,16 +45,21 @@ export default class PanelManager {
 
 
     initDOM(containerSelector) {
+        let container = document.querySelector(containerSelector);
+        container.style.position = 'relative';
+        container.style.overflow = 'hidden';
+        container.style.boxSizing = 'border-box';
+
         this.containerId = 'PanelContainer_' + Date.now();
-        this.initCss(containerSelector);
-        this.initPanels(containerSelector);
+        this.initCss(container);
+        this.initPanels(container);
     }
-    initCss(containerSelector) {
+    initCss(container) {
         // Add Font Awesome css
         const fontAwesomeLink = document.createElement('link');
         fontAwesomeLink.rel = 'stylesheet';
         fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css';
-        document.querySelector(containerSelector).appendChild(fontAwesomeLink);
+        container.appendChild(fontAwesomeLink);
 
         // Add custom css
         const style = document.createElement('style');
@@ -127,9 +132,9 @@ export default class PanelManager {
     height: 100%;
 }
         `;
-        document.querySelector(containerSelector).appendChild(style);
+        container.appendChild(style);
     }
-    initPanels(containerSelector) {
+    initPanels(container) {
         this.PanelContainer = document.createElement('div');
         this.PanelContainer.id = this.containerId;
         this.PanelContainer.innerHTML = `
@@ -143,7 +148,6 @@ export default class PanelManager {
         `;
         this.TopNavEl = this.PanelContainer.querySelector('#TopNav');
         this.SidebarEl = this.PanelContainer.querySelector('#Sidebar');
-        document.querySelector(containerSelector).style.position = 'relative';
-        document.querySelector(containerSelector).appendChild(this.PanelContainer);
+        container.appendChild(this.PanelContainer);
     }
 }
