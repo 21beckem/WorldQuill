@@ -1,6 +1,6 @@
-import Tool from '../supers/Tool.js';
+import GeneralBrushTool from '../supers/GeneralBrushTool.js';
 
-export default class TerrainBrushTool extends Tool {
+export default class TerrainBrushTool extends GeneralBrushTool {
     _diameter = 4;
     _lastTileId = null;
     constructor() {
@@ -39,9 +39,12 @@ export default class TerrainBrushTool extends Tool {
             return;
         this._lastTileId = tile.uuid;
 
-        getCircleFill(this._diameter).forEach(([x, y]) =>
-            tile.getNeighbour(x, y)?.modifyHeight(1, false)
-        );
+        this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) => tile.modifyHeight(1, false));
+        
+
+        // getCircleFill(this._diameter).forEach(([x, y]) =>
+        //     tile.getNeighbour(x, y)?.modifyHeight(1, false)
+        // );
         WorldQuill.Map.reRender();
 
         args.resetMoveDistance();
