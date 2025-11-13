@@ -24,10 +24,10 @@ export class WorldQuill {
         this.ThreeJsWorld = new ThreeJsWorld(containerSelector);
         this.PanelManager = new PanelManager(containerSelector);
 
-        this.tools.push(new InteractTool());
-        this.tools.push(new PaintTool());
-        this.tools.push(new TerrainBrushTool());
-        this.tools.push(new ChunkTool());
+        this.PanelManager.addTool(new InteractTool());
+        this.PanelManager.addTool(new PaintTool());
+        this.PanelManager.addTool(new TerrainBrushTool());
+        this.PanelManager.addTool(new ChunkTool());
 
         this.Map = new Map();
     }

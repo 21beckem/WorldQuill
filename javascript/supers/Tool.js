@@ -10,7 +10,7 @@ export default class Tool {
     }
     activate(){
         WorldQuill.Map.helpers.update();
-        WorldQuill.ThreeJsWorld._raycaster.setMode(this.mode);
+        WorldQuill.PanelManager.setMode(this.mode);
     }
     registerHotkey(keychar) {
         window.addEventListener('keydown', e => {

@@ -1,5 +1,50 @@
 export default class PanelManager {
     constructor(containerSelector='body') {
+        this.initDOM(containerSelector);
+
+        this.tools = [];
+    }
+    addTool(tool) {
+        this.tools.push(tool);
+        this.renderTopNav();
+    }
+    renderTopNav() {
+        this.TopNavEl.innerHTML = '';
+        this.tools.forEach(tool => {
+            const toolBtn = this.generateToolBtn(tool);
+            this.TopNavEl.appendChild(toolBtn);
+        });
+    }
+    generateToolBtn(tool) {
+        // create button
+        const toolBtn = document.createElement('tool-btn');
+        toolBtn.className = WorldQuill.ThreeJsWorld._raycaster.mode === tool.mode ? 'active' : '';
+        toolBtn.dataset.toolMode = tool.mode;
+        toolBtn.innerHTML = `<i class="${tool.icon}"></i>&nbsp;&nbsp;${tool.name}`;
+
+        // add click event
+        toolBtn.addEventListener('click', () => {
+            tool.activate();
+            this.TopNavEl.querySelectorAll('tool-btn').forEach(btn => btn.classList.remove('active'));
+            toolBtn.classList.add('active');
+        });
+        return toolBtn;
+    }
+    setMode(mode) {
+        WorldQuill.ThreeJsWorld._raycaster.setMode(mode);
+        this.TopNavEl.querySelectorAll('tool-btn').forEach(btn => {
+            if (btn.dataset.toolMode === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+
+
+
+    initDOM(containerSelector) {
         this.containerId = 'PanelContainer_' + Date.now();
         this.initCss(containerSelector);
         this.initPanels(containerSelector);
@@ -90,17 +135,14 @@ export default class PanelManager {
         this.PanelContainer.innerHTML = `
             <div class="left-center-section">
                 <div id="TopNav" class="ui-panel">
-                    <tool-btn><i class="fa-solid fa-feather-pointed"></i> Interact</tool-btn>
-                    <tool-btn><i class="fa-solid fa-paintbrush"></i> Paint</tool-btn>
-                    <tool-btn><i class="fa-solid fa-mountain"></i> Terrain</tool-btn>
-                    <tool-btn><i class="fa-solid fa-arrows-up-to-line"></i> Elevate</tool-btn>
-                    <tool-btn><i class="fa-solid fa-cube"></i> Chunk</tool-btn>
                 </div>
             </div>
             <div class="right-section">
                 <div id="Sidebar" class="ui-panel"></div>
             </div>
         `;
+        this.TopNavEl = this.PanelContainer.querySelector('#TopNav');
+        this.SidebarEl = this.PanelContainer.querySelector('#Sidebar');
         document.querySelector(containerSelector).style.position = 'relative';
         document.querySelector(containerSelector).appendChild(this.PanelContainer);
     }

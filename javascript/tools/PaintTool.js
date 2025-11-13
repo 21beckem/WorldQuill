@@ -4,6 +4,8 @@ import * as THREE from '../supers/three.module.min.js';
 export default class PaintTool extends Tool {
     constructor() {
         super('paint', 'p');
+        this.name = 'Paint';
+        this.icon = 'fas fa-paint-brush';
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;

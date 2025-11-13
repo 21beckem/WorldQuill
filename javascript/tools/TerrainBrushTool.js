@@ -5,6 +5,8 @@ export default class TerrainBrushTool extends Tool {
     _lastTileId = null;
     constructor() {
         super('terrain-brush', 't');
+        this.name = 'Terrain';
+        this.icon = 'fas fa-mountain';
         getCircleFill(this._diameter);
     }
     onActivate() {

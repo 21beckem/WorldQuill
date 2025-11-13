@@ -109,6 +109,9 @@ export default class Raycaster {
         this.#mode = mode;
         this._tools.filter(tool => tool.mode == this.#mode).forEach(tool => tool.onActivate( this.#makeReturnObj() )); // activate new mode
     }
+    get mode() {
+        return this.#mode;
+    }
     addTool(tool) {
         if (this._tools.some(t => t.mode == tool.mode))
             throw new Error(`There is already a tool with mode ${tool.mode}`);

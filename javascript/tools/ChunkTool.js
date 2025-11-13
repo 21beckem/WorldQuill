@@ -6,6 +6,8 @@ import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
 export default class ChunkTool extends Tool {
     constructor() {
         super('chunk', 'c');
+        this.name = 'Chunk';
+        this.icon = 'fas fa-cube';
     }
     onActivate(args) {
         this._nonSelectedOpacity = 0.7;

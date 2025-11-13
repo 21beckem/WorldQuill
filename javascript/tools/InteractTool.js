@@ -4,6 +4,8 @@ import { WorldQuill } from '../WorldQuill.js';
 export default class InteractTool extends Tool {
     constructor() {
         super('interact', 'i');
+        this.name = 'Interact';
+        this.icon = 'fas fa-hand-pointer';
     }
     onDown(args) {
         // console.log('Interact down:', args);
