@@ -35,6 +35,7 @@ export default class PanelManager {
         return toolBtn;
     }
     setMode(mode) {
+        this.beforeActivate(this.tools.find(tool => tool.mode === mode));
         WorldQuill.ThreeJsWorld._raycaster.setMode(mode);
         this.TopNavEl.querySelectorAll('tool-btn').forEach(btn => {
             if (btn.dataset.toolMode === mode) {
@@ -43,13 +44,17 @@ export default class PanelManager {
                 btn.classList.remove('active');
             }
         });
-        this.onActivate(this.tools.find(tool => tool.mode === mode));
     }
 
 
-    onActivate(tool) {
-        this.SidebarDetailsEl.innerHTML = `<h1>${tool.name}</h1>`;
+    beforeActivate(tool) {
+        this.SidebarTitleEl.innerText = tool.name;
+        this.SidebarDetailsEl.innerHTML = '';
         this.SidebarHelpEl.innerHTML = HTMLifyer.generateSidebarHelp(tool);
+    }
+    setDetails(details) {
+        this.SidebarDetailsEl.innerHTML = '';
+        HTMLifyer.generateSidebarDetails(details, this.SidebarDetailsEl);
     }
 
     
@@ -109,7 +114,7 @@ export default class PanelManager {
 #${this.containerId} .right-section {
     top: 0;
     right: 0;
-    width: 400px;
+    width: 300px;
     padding-right: 75px;
     display: flex;
     flex-direction: column;
@@ -153,6 +158,25 @@ export default class PanelManager {
     width: 100%;
     padding: 5px 10px;
 }
+
+#SidebarDetails {
+    display: flex;
+    flex-direction: column;
+}
+#SidebarDetails > * {
+    margin: 10px 5px;
+}
+#SidebarDetails label {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 10px);
+}
+#SidebarDetails label input, #SidebarDetails label select {
+    max-width: 50%;
+    flex: 1;
+    padding: 0.5em;
+    border-radius: 5px;
+}
         `;
         container.appendChild(style);
     }
@@ -165,11 +189,15 @@ export default class PanelManager {
                 </div>
             </div>
             <div class="right-section">
-                <div id="SidebarDetails" class="ui-panel"></div>
+                <div class="ui-panel">
+                    <h2 id="SidebarTitle" style="padding-left: 20px;"></h2>
+                    <div id="SidebarDetails"></div>
+                </div>
                 <div id="SidebarHelp" class="ui-panel"></div>
             </div>
         `;
         this.TopNavEl = this.PanelContainer.querySelector('#TopNav');
+        this.SidebarTitleEl = this.PanelContainer.querySelector('#SidebarTitle');
         this.SidebarDetailsEl = this.PanelContainer.querySelector('#SidebarDetails');
         this.SidebarHelpEl = this.PanelContainer.querySelector('#SidebarHelp');
         container.appendChild(this.PanelContainer);
@@ -179,10 +207,88 @@ export default class PanelManager {
 
 class HTMLifyer {
     static generateSidebarHelp(tool) {
-        return `
-            <p>${tool.description}</p>
-            <p></p>
-            <p></p>
-        `;
+        return `<p>${tool.description}</p>`;
+    }
+    static generateSidebarDetails(detailsArr, parentElement) {
+        // for each in the array, check the type
+        // if type is a string, add HTML to the parent element
+        // if type is an object, call the parseObject function
+
+        detailsArr.forEach(item => {
+            if (typeof item === 'string') {
+                parentElement.appendChild( this.makeTextNode(item) );
+            } else if (typeof item === 'object') {
+                parentElement.appendChild( this.parseObject(item) );
+            }
+        });
+    }
+    static makeTextNode(text) {
+        let n = document.createTextNode('span');
+        n.innerHTML = text;
+        return n;
+    }
+    static parseObject(obj) {
+        // if a label is given, that means it's an input that needs a label
+        let el;
+        if (obj.label) {
+            el = document.createElement( (['select','button'].includes(obj.type)) ? obj.type : 'input' );
+            el.setAttribute('type', obj.type);
+            el.setAttribute('placeholder', obj.label);
+        } else {
+            el = document.createElement(obj.type);
+        }
+
+        // set attributes and gather events
+        let eventAttrs = [];
+        (obj.attrs || []).forEach(attr => {
+            // if the attribute is an event attribute
+            if (attr[0].startsWith('on') && attr[1] !== 'true' && attr[1] !== 'false' && attr[1] !== true && attr[1] !== false)
+                eventAttrs.push(attr);
+            else
+                el.setAttribute(attr[0], attr[1]);
+        });
+
+        // set event listeners
+        eventAttrs.forEach(attr => {
+            el.addEventListener(attr[0].toLowerCase().substring(2), attr[1]);
+            console.log('added event listener:', attr[0].substring(2), attr[1]);
+        });
+
+        // set content
+        el.innerHTML = obj.content || '';
+
+        // if there are options, make them as children
+        if (obj.options) {
+            obj.options.map(o => {
+                let thisO = {
+                    type: 'option',
+                    attrs: [['value', o[1]], ],
+                    content: o[0]
+                };
+                if (o[3]===true)
+                    thisO.attrs.push(['selected','selected']);
+                return thisO;
+            }).forEach(c => {
+                el.appendChild( this.parseObject(c) );
+            });
+        }
+
+        // if it has a label, return it with the input
+        if (obj.label) {
+            let label = document.createElement('label');
+            label.innerText = obj.label;
+            label.innerHTML += '&nbsp;&nbsp;';
+            label.appendChild(el);
+            el = label;
+        }
+
+        // add child elements
+        if (obj.children) {
+            obj.children.forEach(c => {
+                el.appendChild( this.parseObject(c) );
+            });
+        }
+
+        return el;
     }
 }

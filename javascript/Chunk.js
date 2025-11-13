@@ -1,4 +1,4 @@
-import * as THREE from './supers/three.module.min.js';
+import * as THREE from './assets/three.module.min.js';
 import Tile from './Tile.js';
 import { tileWidth, chunkWidthInTiles } from './constants.js';
 import { WorldQuill } from './WorldQuill.js';

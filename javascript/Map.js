@@ -1,4 +1,4 @@
-import * as THREE from './supers/three.module.min.js';
+import * as THREE from './assets/three.module.min.js';
 import Chunk from './Chunk.js';
 import { WorldQuill } from './WorldQuill.js';
 // import { Serializable } from './supers/Serializable.js';

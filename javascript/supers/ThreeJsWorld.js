@@ -1,6 +1,6 @@
 import { renderer } from '../constants.js';
-import * as THREE from './three.module.min.js';
-import { OrbitControls } from './OrbitControls.min.js';
+import * as THREE from '../assets/three.module.min.js';
+import { OrbitControls } from '../assets/OrbitControls.min.js';
 import Raycaster from './Raycaster.js';
 
 export default class ThreeJsWorld {

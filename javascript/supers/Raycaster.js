@@ -1,6 +1,6 @@
 import { renderer } from '../constants.js';
 import { WorldQuill } from '../WorldQuill.js';
-import * as THREE from './three.module.min.js';
+import * as THREE from '../assets/three.module.min.js';
 
 export default class Raycaster {
     _tools = Array();
