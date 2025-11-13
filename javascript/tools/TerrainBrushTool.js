@@ -2,6 +2,7 @@ import GeneralBrushTool from '../supers/GeneralBrushTool.js';
 
 export default class TerrainBrushTool extends GeneralBrushTool {
     _diameter = 4;
+    _addSubtract = 1;
     _lastTileId = null;
     constructor() {
         super('terrain-brush', 't');
@@ -59,10 +60,35 @@ export default class TerrainBrushTool extends GeneralBrushTool {
                     ['oninput', this.setBrushSize.bind(this)]
                 ],
                 label: 'Brush Size'
+            },
+            {
+                type: 'div',
+                style: 'display: flex; gap: 5px;',
+                children: [
+                    {
+                        type: 'button',
+                        style: 'flex: 1; font-size: 16px;',
+                        class: [this._addSubtract==-1 ? 'active' : ''],
+                        attrs: [['data-value', '-1'], ['onclick', this.setAddSubtract.bind(this)]],
+                        content: '<i class="fa-solid fa-angles-down"></i> Lower'
+                    },
+                    {
+                        type: 'button',
+                        style: 'flex: 1; font-size: 16px;',
+                        class: [this._addSubtract==1 ? 'active' : ''],
+                        attrs: [['data-value', '1'], ['onclick', this.setAddSubtract.bind(this)]],
+                        content: 'Raise <i class="fa-solid fa-angles-up"></i>'
+                    }
+                ]
             }
         ]);
     }
     setBrushSize(e) {
         this._diameter = e.target.value;
+    }
+    setAddSubtract(e) {
+        console.log(e);
+        
+        console.log(e.target.getAttribute('data-value'));
     }
 }

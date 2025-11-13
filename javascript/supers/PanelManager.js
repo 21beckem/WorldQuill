@@ -194,7 +194,10 @@ export default class PanelManager {
     width: 100%;
 }
 #${this.containerId} #SidebarDetails button:hover, #SidebarDetails input[type="button"]:hover {
-    background-color: #d4cfa8;  
+    background-color: #c7c29cff;
+}
+#${this.containerId} #SidebarDetails button.active, #SidebarDetails input[type="button"].active {
+    background-color: #ebe298;
 }
         `;
         container.appendChild(style);
@@ -274,6 +277,14 @@ class HTMLifyer {
 
         // set content
         el.innerHTML = obj.content || '';
+
+        // set style
+        if (obj.style)
+            el.style.cssText = obj.style;
+
+        // set class
+        if (obj.class)
+            el.classList.add( ...obj.class.map(c => c.trim()).filter(c => c !== '') );
 
         // if there are options, make them as children
         if (obj.options) {
