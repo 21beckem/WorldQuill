@@ -114,7 +114,7 @@ export default class PanelManager {
 #${this.containerId} .right-section {
     top: 0;
     right: 0;
-    width: 300px;
+    width: 320px;
     padding-right: 75px;
     display: flex;
     flex-direction: column;
@@ -156,26 +156,45 @@ export default class PanelManager {
 #${this.containerId} .right-section > div {
     margin: 0 auto;
     width: 100%;
-    padding: 5px 10px;
+    padding: 5px 20px;
 }
 
-#SidebarDetails {
+#${this.containerId} #SidebarDetails {
     display: flex;
     flex-direction: column;
 }
-#SidebarDetails > * {
-    margin: 10px 5px;
+#${this.containerId} #SidebarDetails > * {
+    margin: 10px 0;
 }
-#SidebarDetails label {
+#${this.containerId} #SidebarDetails label {
     display: flex;
     justify-content: space-between;
-    width: calc(100% - 10px);
+    width: 100%;
 }
-#SidebarDetails label input, #SidebarDetails label select {
+#${this.containerId} #SidebarDetails .jscolor {
+    cursor: pointer;
+}
+#${this.containerId} #SidebarDetails label input, #SidebarDetails label select {
     max-width: 50%;
     flex: 1;
     padding: 0.5em;
     border-radius: 5px;
+}
+#${this.containerId} #SidebarDetails button, #SidebarDetails input[type="button"] {
+    margin: 0;
+    display: block;
+    padding: 0.5em;
+    border-radius: 5px;
+    border: none;
+    background-color: #d4cfa8;
+    cursor: pointer;
+}
+#${this.containerId} #SidebarDetails > button, #SidebarDetails > input[type="button"] {
+    margin: 0 auto;
+    width: 100%;
+}
+#${this.containerId} #SidebarDetails button:hover, #SidebarDetails input[type="button"]:hover {
+    background-color: #d4cfa8;  
 }
         `;
         container.appendChild(style);
@@ -251,7 +270,6 @@ class HTMLifyer {
         // set event listeners
         eventAttrs.forEach(attr => {
             el.addEventListener(attr[0].toLowerCase().substring(2), attr[1]);
-            console.log('added event listener:', attr[0].substring(2), attr[1]);
         });
 
         // set content

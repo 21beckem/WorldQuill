@@ -3,7 +3,7 @@ import * as THREE from '../assets/three.module.min.js';
 import JSColor from "../assets/jscolor.js";
 
 export default class PaintTool extends Tool {
-    _diameter = 4;
+    _diameter = 2;
     _color = '#42f557';
     _subMode = 'paint';
     constructor() {
@@ -12,6 +12,7 @@ export default class PaintTool extends Tool {
         this.label = 'Paint';
         this.icon = 'fas fa-paint-brush';
         this.description = `This is how you add color to your world! Click and drag accross the terrain to paint it.`;
+        this._inEyeDropperMode = false;
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
@@ -28,21 +29,27 @@ export default class PaintTool extends Tool {
     }
     onUp(args) {
         this.paint(args);
+        this.#stopEyedropper();
     }
     onClick(args) {
         this.paint(args);
+       this.#stopEyedropper();
     }
     paint(args) {
         const found = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
         if (found.length < 1) return;
-        found[0].object.material.color = new THREE.Color(this._color);
+
+        if (this._inEyeDropperMode)
+            this.setColor('#'+found[0].object.material.color.getHexString());
+        else
+            found[0].object.material.color = new THREE.Color(this._color);
     }
 
 
 
     // UI
     setUiDetails() {
-        const colorPickerId = 'colorPicker_' + Date.now();
+        this._UI_colorPickerId = 'colorPicker_' + Date.now();
         WorldQuill.PanelManager.setDetails([
             {
                 type: 'range',
@@ -54,12 +61,12 @@ export default class PaintTool extends Tool {
             },
             {
                 type: 'input',
-                attrs: [['id', colorPickerId], ['onChange', this.setColor.bind(this)]],
+                attrs: [['id', this._UI_colorPickerId], ['onChange', (e)=>this.setColor(e.target.value) ]],
                 label: 'Color',
                 children: [{
                     type: 'button',
                     attrs: [['onclick', this.startEyedropper.bind(this)]],
-                    content: 'I'
+                    content: '<i class="fa-solid fa-eye-dropper"></i>'
                 }]
             },
             {
@@ -72,20 +79,29 @@ export default class PaintTool extends Tool {
                 label: 'Mode'
             },
         ]);
-        new JSColor('#'+colorPickerId, {
+        new JSColor('#'+this._UI_colorPickerId, {
             value: this._color
         });
     }
     setBrushSize(e) {
         this._diameter = e.target.value;
     }
-    setColor(e) {
-        this._color = e.target.value;
+    setColor(val) {
+        this._color = val;
+        document.getElementById(this._UI_colorPickerId).jscolor.fromString(this._color);
     }
     setSubMode(e) {
         this._subMode = e.target.value;
     }
     startEyedropper(e) {
-        alert('would now let you use the eyedropper tool...');
+        this._eyedropperEl = e.target;
+        if (this._inEyeDropperMode) return this.stopEyedropper();
+        this._eyedropperEl.style.opacity = 0.2;
+        this._inEyeDropperMode = true;
+    }
+    #stopEyedropper() {
+        if (!this._inEyeDropperMode) return;
+        this._eyedropperEl.style.opacity = 1.0;
+        this._inEyeDropperMode = false;
     }
 }
