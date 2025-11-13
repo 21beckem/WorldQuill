@@ -116,9 +116,5 @@ export default class Raycaster {
         if (this._tools.some(t => t.mode == tool.mode))
             throw new Error(`There is already a tool with mode ${tool.mode}`);
         this._tools.push(tool);
-
-        // if this is the first tool, set it as active by default
-        if (this._tools.length == 1)
-            this.setMode(tool.mode);
     }
 }

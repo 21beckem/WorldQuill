@@ -5,8 +5,10 @@ export default class TerrainBrushTool extends Tool {
     _lastTileId = null;
     constructor() {
         super('terrain-brush', 't');
-        this.name = 'Terrain';
+        this.name = 'Terrain Brush';
+        this.label = 'Terrain';
         this.icon = 'fas fa-mountain';
+        this.description = `This is how you add height to your world! Click and drag accross the terrain to raise and lower it.`;
         getCircleFill(this._diameter);
     }
     onActivate() {

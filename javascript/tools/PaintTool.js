@@ -4,8 +4,10 @@ import * as THREE from '../supers/three.module.min.js';
 export default class PaintTool extends Tool {
     constructor() {
         super('paint', 'p');
-        this.name = 'Paint';
+        this.name = 'Paint Brush';
+        this.label = 'Paint';
         this.icon = 'fas fa-paint-brush';
+        this.description = `This is how you add color to your world! Click and drag accross the terrain to paint it.`;
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;

@@ -4,8 +4,10 @@ import { WorldQuill } from '../WorldQuill.js';
 export default class InteractTool extends Tool {
     constructor() {
         super('interact', 'i');
-        this.name = 'Interact';
+        this.name = 'Interaction Tool';
+        this.label = 'Interact';
         this.icon = 'fas fa-hand-pointer';
+        this.description = `Welcome to WorldQuill! The <b>${this.name}</b> lets you pan around the map and interact with entities. Click on any entity for more options!`;
     }
     onDown(args) {
         // console.log('Interact down:', args);

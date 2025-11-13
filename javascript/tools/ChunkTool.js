@@ -6,8 +6,10 @@ import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
 export default class ChunkTool extends Tool {
     constructor() {
         super('chunk', 'c');
-        this.name = 'Chunk';
+        this.name = 'Chunk Manager';
+        this.label = 'Chunk';
         this.icon = 'fas fa-cube';
+        this.description = `This tool allows you to manipulate chunks. As you can see, the look of the map itself has changed. Click on any chunk to select it and see more options. You can also click on any newly-appeared gray chunk to insert a new chunk in its place. While a chunk is selected, you can also drag it to a new location on the map. <br><b>Note:</b> You can only drag it where a gray chunk appears. In other words, it must be ajacent to an existing chunk.`;
     }
     onActivate(args) {
         this._nonSelectedOpacity = 0.7;
@@ -151,8 +153,6 @@ export default class ChunkTool extends Tool {
 
 
     #makeFakeChunksAtNewPositions() {
-        console.log(this.#getPositionsOfPossibleNewChunks());
-        
         this.#getPositionsOfPossibleNewChunks().forEach(this.#generateFakeChunk.bind(this));
     }
     #getPositionsOfPossibleNewChunks() {
@@ -223,8 +223,6 @@ export default class ChunkTool extends Tool {
         WorldQuill.Map.add(newFake);
     }
     #removeFakeChunks() {
-        console.log('fakeChunks', this._fakeChunks);
-        
         this._fakeChunks.forEach(fake => WorldQuill.Map.remove(fake));
         this._fakeChunks = [];
     }

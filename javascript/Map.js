@@ -25,8 +25,6 @@ export default class Map extends THREE.Group {
         this.addChunk(1,1);
     }
     checkifChunkExists(x, y) {
-        console.log('checking if chunk exists:', x, y);
-        
         return this.realChunks.some(chunk => chunk._location.x == x && chunk._location.y == y);
     }
     #updateHelpers() {
