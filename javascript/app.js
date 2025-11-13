@@ -1,3 +1,3 @@
 import { WorldQuill } from './WorldQuill.js';
 
-WorldQuill.init();
+WorldQuill.init('#WorldQuillContainer');

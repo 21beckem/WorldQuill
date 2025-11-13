@@ -4,10 +4,10 @@ import { OrbitControls } from './OrbitControls.min.js';
 import Raycaster from './Raycaster.js';
 
 export default class ThreeJsWorld {
-    constructor() {
+    constructor(containerSelector) {
         this._scene = new THREE.Scene();
 
-        this.#initThree();
+        this.#initThree(containerSelector);
         this.#handleWindowResize();
         this.#createCamera();
         this.#createLight();
@@ -19,13 +19,18 @@ export default class ThreeJsWorld {
 
         // this.#makeSimpleBox(0, 0, 0);
     }
-    #initThree() {
+    #initThree(containerSelector) {
         renderer.domElement.id = 'WorldQuillDomElement';
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+		
+		const container = document.querySelector(containerSelector);
+		if (container)
+			container.appendChild(renderer.domElement);
+		else
+        	document.body.appendChild(renderer.domElement);
     }
     #handleWindowResize() {
         const onWindowResize = () => {

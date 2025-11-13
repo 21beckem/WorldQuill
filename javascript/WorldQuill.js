@@ -15,12 +15,11 @@ class Tools extends Array {
 }
 
 export class WorldQuill {
-    static ThreeJsWorld;
     static tools = new Tools();
-
     static Map;
-    static init() {
-        this.ThreeJsWorld = new ThreeJsWorld();
+
+    static init(containerSelector='body') {
+        this.ThreeJsWorld = new ThreeJsWorld(containerSelector);
 
         this.tools.push(new InteractTool());
         this.tools.push(new PaintTool());
