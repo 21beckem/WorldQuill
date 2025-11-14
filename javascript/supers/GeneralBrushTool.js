@@ -4,7 +4,7 @@ export default class GeneralBrushTool extends Tool {
     constructor() {
         super(...arguments);
     }
-    GeneralBrushTool_applyBrush(diameter, tile, applyMethod) {
+    GeneralBrushTool_applyBrush(diameter, tile, applyMethod, prefaceMethod=(x=>x)) {
         getCircleFill(diameter)
             .map(([x, y], index) => {
                 // if this is a wall, only paint the first tile

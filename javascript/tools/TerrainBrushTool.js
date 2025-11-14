@@ -1,7 +1,7 @@
 import GeneralBrushTool from '../supers/GeneralBrushTool.js';
 
 export default class TerrainBrushTool extends GeneralBrushTool {
-    _diameter = 4;
+    _diameter = 2;
     _addSubtract = 1;
     _lastTileId = null;
     constructor() {
@@ -25,6 +25,8 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         this.paint(args);
     }
     onUp(args) {
+        // console.log('up');
+        WorldQuill.Map.reRender();
         this._lastTileId = null;
     }
     onClick(args) {
@@ -40,13 +42,30 @@ export default class TerrainBrushTool extends GeneralBrushTool {
             return;
         this._lastTileId = tile.uuid;
 
-        this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
-            tile.modifyHeight(this._addSubtract, false)
-        );
-        
-        WorldQuill.Map.reRender();
+        if (this._addSubtract == 0) { // in smoothing mode
+            let heights = [];
+            let avgHeight = 0;
+            function calculateAverage(numbers) {
+                if (numbers.length === 0) {
+                    return 0; // Handle empty array case
+                }
+                const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                return sum / numbers.length;
+            }
+            this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile, index) => {
+                if (index == 0) avgHeight = Math.round(calculateAverage(heights));
+                tile.setHeight(avgHeight, false)
+            }, (tile) => {
+                heights.push(tile.height);
+                return tile;
+            });
+        } else {
+            this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
+                tile.modifyHeight(this._addSubtract, false)
+            );
+        }
 
-        args.resetMoveDistance();
+        // args.resetMoveDistance();
     }
 
 
@@ -63,29 +82,36 @@ export default class TerrainBrushTool extends GeneralBrushTool {
             },
             {
                 type: 'div',
-                style: 'display: flex; gap: 5px;',
+                style: 'display: flex; gap: 5px; flex-wrap: wrap;',
                 class: ['action-buttons'],
                 children: [
                     {
                         type: 'button',
-                        style: 'flex: 1; font-size: 16px;',
+                        style: 'flex: 1; font-size: 16px; flex-basis: calc(50% - 20px);',
                         class: [this._addSubtract==-1 ? 'active' : ''],
                         attrs: [['data-value', '-1'], ['onclick', this.setAddSubtract.bind(this)]],
                         content: '<i class="fa-solid fa-angles-down"></i> Lower'
                     },
                     {
                         type: 'button',
-                        style: 'flex: 1; font-size: 16px;',
+                        style: 'flex: 1; font-size: 16px; flex-basis: calc(50% - 20px);',
+                        class: [this._addSubtract==1 ? 'active' : ''],
+                        attrs: [['data-value', '1'], ['onclick', this.setAddSubtract.bind(this)]],
+                        content: 'Raise <i class="fa-solid fa-angles-up"></i>'
+                    },
+                    {
+                        type: 'button',
+                        style: 'flex: 1; font-size: 16px; flex-basis: calc(50% - 20px);',
                         class: [this._addSubtract==0 ? 'active' : ''],
                         attrs: [['data-value', '0'], ['onclick', this.setAddSubtract.bind(this)]],
                         content: '<i class="fa-solid fa-mound"></i> Smooth'
                     },
                     {
                         type: 'button',
-                        style: 'flex: 1; font-size: 16px;',
-                        class: [this._addSubtract==1 ? 'active' : ''],
-                        attrs: [['data-value', '1'], ['onclick', this.setAddSubtract.bind(this)]],
-                        content: 'Raise <i class="fa-solid fa-angles-up"></i>'
+                        style: 'flex: 1; font-size: 16px; flex-basis: calc(50% - 20px);',
+                        class: [this._addSubtract==0 ? 'active' : ''],
+                        attrs: [['data-value', '0'], ['onclick', this.setAddSubtract.bind(this)]],
+                        content: '<i class="fa-solid fa-arrows-down-to-line"></i> Zero'
                     }
                 ]
             }

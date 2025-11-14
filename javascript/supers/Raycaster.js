@@ -51,15 +51,13 @@ export default class Raycaster {
     }
     #setupPointerUp() {
         renderer.domElement.addEventListener('pointerup', event => {
-            if (event.button !== 0) return;
-            if (!this._mouseIsDown) return;
-            // console.log('up');
             this.#doOnAllEvents(event);
 
             if (this._draggingMouseMovedYet)
                 this.#sendEvent('onUp');
             else
                 this.#sendEvent('onClick');
+            console.log('up');
             
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
