@@ -26,9 +26,6 @@ export default class Tile extends THREE.Mesh {
         );
     }
     makeWalls() {
-        if (this.position.y == 0)
-            return;
-
         if (this.children.length > 0)
             this.children.forEach(c => this.remove(c));
 
@@ -120,6 +117,7 @@ export default class Tile extends THREE.Mesh {
         let x = this._absoluteLoc.x + offsetX;
         let y = this._absoluteLoc.y + offsetY;
 
+        if (!WorldQuill.Map) return; // everything is still initializing
         let found = WorldQuill.Map.helpers.allTiles.find(t => t._absoluteLoc.x == x && t._absoluteLoc.y == y);
         // console.log('found Neighbour', x, y, found);
         return found;

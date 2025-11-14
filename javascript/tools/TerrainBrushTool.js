@@ -41,7 +41,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         this._lastTileId = tile.uuid;
 
         this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
-            tile.modifyHeight(1, false)
+            tile.modifyHeight(this._addSubtract, false)
         );
         
         WorldQuill.Map.reRender();
@@ -64,6 +64,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
             {
                 type: 'div',
                 style: 'display: flex; gap: 5px;',
+                class: ['action-buttons'],
                 children: [
                     {
                         type: 'button',
@@ -71,6 +72,13 @@ export default class TerrainBrushTool extends GeneralBrushTool {
                         class: [this._addSubtract==-1 ? 'active' : ''],
                         attrs: [['data-value', '-1'], ['onclick', this.setAddSubtract.bind(this)]],
                         content: '<i class="fa-solid fa-angles-down"></i> Lower'
+                    },
+                    {
+                        type: 'button',
+                        style: 'flex: 1; font-size: 16px;',
+                        class: [this._addSubtract==0 ? 'active' : ''],
+                        attrs: [['data-value', '0'], ['onclick', this.setAddSubtract.bind(this)]],
+                        content: '<i class="fa-solid fa-mound"></i> Smooth'
                     },
                     {
                         type: 'button',
@@ -88,7 +96,10 @@ export default class TerrainBrushTool extends GeneralBrushTool {
     }
     setAddSubtract(e) {
         console.log(e);
+        WorldQuill.PanelManager.SidebarDetailsEl.querySelectorAll('button.active').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        this._addSubtract = parseInt(e.target.dataset.value);
+        console.log(this._addSubtract);
         
-        console.log(e.target.getAttribute('data-value'));
     }
 }

@@ -1,5 +1,4 @@
 import { renderer } from '../constants.js';
-import { WorldQuill } from '../WorldQuill.js';
 import * as THREE from '../assets/three.module.min.js';
 
 export default class Raycaster {
@@ -73,7 +72,7 @@ export default class Raycaster {
 
         if (calculateDistance) {
             this._moveMouseDistance += Math.sqrt(Math.pow(this._moveMouse.y - newMouseY, 2) + Math.pow(this._moveMouse.x - newMouseX, 2));
-			if (this._moveMouseDistance > 0.1) {
+			if (this._moveMouseDistance > 0.025) {
 				this._draggingMouseMovedYet = true;
 			}
         }

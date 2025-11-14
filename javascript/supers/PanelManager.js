@@ -103,6 +103,9 @@ export default class PanelManager {
     pointer-events: none;
     font-family: 'Poppins', sans-serif;
 }
+#${this.containerId} i.fa-solid {
+    pointer-events: none;
+}
 #${this.containerId} > * {
     position: relative;
     padding: 50px 0;
