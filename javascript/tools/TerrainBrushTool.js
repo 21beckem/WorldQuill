@@ -25,9 +25,8 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         this.paint(args);
     }
     onUp(args) {
-        // console.log('up');
-        WorldQuill.Map.reRender();
         this._lastTileId = null;
+        WorldQuill.Map.reRender();
     }
     onClick(args) {
         this.paint(args);
@@ -121,11 +120,8 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         this._diameter = e.target.value;
     }
     setAddSubtract(e) {
-        console.log(e);
         WorldQuill.PanelManager.SidebarDetailsEl.querySelectorAll('button.active').forEach(btn => btn.classList.remove('active'));
         e.target.classList.add('active');
         this._addSubtract = parseInt(e.target.dataset.value);
-        console.log(this._addSubtract);
-        
     }
 }

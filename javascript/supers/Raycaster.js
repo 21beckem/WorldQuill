@@ -57,7 +57,6 @@ export default class Raycaster {
                 this.#sendEvent('onUp');
             else
                 this.#sendEvent('onClick');
-            console.log('up');
             
 			this._draggingMouseMovedYet = false;
 			this._moveMouseDistance = 0;
@@ -96,7 +95,7 @@ export default class Raycaster {
         if (!intersectables)
             return [];
         this._raycaster.setFromCamera(this._moveMouse, this._camera);
-        return this._raycaster.intersectObjects(intersectables);
+        return this._raycaster.intersectObjects(intersectables, false);
     }
     resetMoveDistanceFunction() {
         this._moveMouseDistance = 0;

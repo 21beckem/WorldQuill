@@ -34,7 +34,7 @@ export default class Chunk extends THREE.Group {
     }
     reRender() {
         this.children.forEach(tile => {
-            tile.makeWalls();
+            tile.render();
             tile.assignAbsoluteLocation();
         });
     }
