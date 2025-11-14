@@ -177,13 +177,16 @@ export default class PanelManager {
 #${this.containerId} #SidebarDetails .jscolor {
     cursor: pointer;
 }
-#${this.containerId} #SidebarDetails label input, #SidebarDetails label select {
+#${this.containerId} #SidebarDetails label input, #${this.containerId} #SidebarDetails label select {
     max-width: 50%;
     flex: 1;
     padding: 0.5em;
     border-radius: 5px;
 }
-#${this.containerId} #SidebarDetails button, #SidebarDetails input[type="button"] {
+#${this.containerId} #SidebarDetails button,
+#${this.containerId} #SidebarDetails input[type="button"],
+#${this.containerId} #SidebarDetails select,
+#${this.containerId} #SidebarDetails select option {
     margin: 0;
     display: block;
     padding: 0.5em;
@@ -192,14 +195,23 @@ export default class PanelManager {
     background-color: #d4cfa8;
     cursor: pointer;
 }
-#${this.containerId} #SidebarDetails > button, #SidebarDetails > input[type="button"] {
+#${this.containerId} #SidebarDetails > button,
+#${this.containerId} #SidebarDetails > input[type="button"],
+#${this.containerId} #SidebarDetails > select,
+#${this.containerId} #SidebarDetails > select option {
     margin: 0 auto;
     width: 100%;
 }
-#${this.containerId} #SidebarDetails button:hover, #SidebarDetails input[type="button"]:hover {
+#${this.containerId} #SidebarDetails button:hover,
+#${this.containerId} #SidebarDetails input[type="button"]:hover,
+#${this.containerId} #SidebarDetails select:hover,
+#${this.containerId} #SidebarDetails select option:hover {
     background-color: #c7c29cff;
 }
-#${this.containerId} #SidebarDetails button.active, #SidebarDetails input[type="button"].active {
+#${this.containerId} #SidebarDetails button.active,
+#${this.containerId} #SidebarDetails input[type="button"].active,
+#${this.containerId} #SidebarDetails select.active,
+#${this.containerId} #SidebarDetails select option:checked {
     background-color: #ebe298;
 }
         `;
@@ -297,7 +309,7 @@ class HTMLifyer {
                     attrs: [['value', o[1]], ],
                     content: o[0]
                 };
-                if (o[3]===true)
+                if (o[2]===true)
                     thisO.attrs.push(['selected','selected']);
                 return thisO;
             }).forEach(c => {

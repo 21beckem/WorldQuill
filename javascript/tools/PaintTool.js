@@ -1,11 +1,13 @@
 import GeneralBrushTool from '../supers/GeneralBrushTool.js';
 import * as THREE from '../assets/three.module.min.js';
 import JSColor from "../assets/jscolor.js";
+import TileWalls from '../TileWalls.js';
 
 export default class PaintTool extends GeneralBrushTool {
     _diameter = 2;
     _color = '#42f557';
-    _subMode = 'paint';
+    static whatToPaintOptions = ['Ground', 'Walls', 'Ground & Walls'];
+    _whatToPaint = 0;
     constructor() {
         super('paint', 'p');
         this.name = 'Paint Brush';
@@ -36,14 +38,19 @@ export default class PaintTool extends GeneralBrushTool {
        this.#stopEyedropper();
     }
     paint(args) {
-        const found = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
-        if (found.length < 1) return;
+        const hit = args.castRay(WorldQuill.Map.helpers.allTilesAndWalls);
+        if (hit.length < 1) return;
+        
+        let found = (hit[0].object instanceof TileWalls) ? hit[0].object.parent : hit[0].object;
 
         if (this._inEyeDropperMode)
-            this.setColor('#'+found[0].object.material.color.getHexString());
+            this.setColor('#'+hit[0].object.material.color.getHexString());
         else
-            this.GeneralBrushTool_applyBrush(this._diameter, found[0].object, (tile) => {
-                tile.setColor(this._color);
+            this.GeneralBrushTool_applyBrush(this._diameter, found, (tile) => {
+                if (this._whatToPaint == 2 || this._whatToPaint == 0)
+                    tile.setColor(this._color);
+                if (this._whatToPaint == 2 || this._whatToPaint == 1)
+                    tile.setWallColor(this._color);
             });
     }
 
@@ -71,33 +78,35 @@ export default class PaintTool extends GeneralBrushTool {
                     content: '<i class="fa-solid fa-eye-dropper"></i>'
                 }]
             },
-            // {
-            //     type: 'select',
-            //     attrs: [['onChange', this.setSubMode.bind(this)]],
-            //     options: [
-            //         ['Paint Bush', 'paint', this._subMode=='paint'],
-            //         ['Bucket Fill', 'bucket', this._subMode=='bucket']
-            //     ],
-            //     label: 'Mode'
-            // }
+            {
+                type: 'select',
+                attrs: [['onChange', this.setWhatToPaint.bind(this)]],
+                class: ['active'],
+                options: (
+                    PaintTool.whatToPaintOptions.map((o,i) =>
+                        [o, i, (this._whatToPaint===i)]
+                    )
+                ),
+                label: 'What to paint'
+            }
         ]);
         new JSColor('#'+this._UI_colorPickerId, {
             value: this._color
         });
     }
     setBrushSize(e) {
-        this._diameter = e.target.value;
+        this._diameter = parseInt(e.target.value);
     }
     setColor(val) {
         this._color = val;
         document.getElementById(this._UI_colorPickerId).jscolor.fromString(this._color);
     }
-    setSubMode(e) {
-        this._subMode = e.target.value;
+    setWhatToPaint(e) {
+        this._whatToPaint = parseInt(e.target.value);
     }
     startEyedropper(e) {
         this._eyedropperEl = e.target;
-        if (this._inEyeDropperMode) return this.stopEyedropper();
+        if (this._inEyeDropperMode) return this.#stopEyedropper();
         this._eyedropperEl.style.opacity = 0.2;
         this._inEyeDropperMode = true;
     }

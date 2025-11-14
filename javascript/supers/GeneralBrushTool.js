@@ -1,4 +1,5 @@
 import Tool from '../supers/Tool.js';
+import TileWalls from '../TileWalls.js';
 
 export default class GeneralBrushTool extends Tool {
     constructor() {
@@ -8,7 +9,7 @@ export default class GeneralBrushTool extends Tool {
         getCircleFill(diameter)
             .map(([x, y], index) => {
                 // if this is a wall, only paint the first tile
-                if (tile.userData.wall) return (index == 0) ? tile : false;
+                if (tile instanceof TileWalls) return (index == 0) ? tile : false;
                 return tile.getNeighbour(x, y);
             })
             .filter(tile => !!tile)

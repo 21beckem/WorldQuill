@@ -28,6 +28,10 @@ export default class Tile extends THREE.Mesh {
             this._localLoc.y + (chunkWidthInTiles * this.parent._location.y)
         );
     }
+    setWallColor(color) {
+        this.wallColor = new THREE.Color(color);
+        this.children[0]?.setColor(color);
+    }
     render() {
         this.children[0]?.render();
     }
