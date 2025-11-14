@@ -5,4 +5,4 @@ export const renderer = new THREE.WebGLRenderer({
 export const tileWidth = 5.0;
 export const tileRimHeight = 0.5;
 export const tileHeightStep = 2.0;
-export const chunkWidthInTiles = 14; // must be divisible by 2 (even number)
+export const chunkWidthInTiles = 20; // must be divisible by 2 (even number)

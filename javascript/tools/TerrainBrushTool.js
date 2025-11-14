@@ -26,7 +26,6 @@ export default class TerrainBrushTool extends GeneralBrushTool {
     }
     onUp(args) {
         this._lastTileId = null;
-        WorldQuill.Map.reRender();
     }
     onClick(args) {
         this.paint(args);
@@ -63,6 +62,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
                 tile.modifyHeight(this._addSubtract, false)
             );
         }
+        WorldQuill.Map.reRender();
 
         // args.resetMoveDistance();
     }

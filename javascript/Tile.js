@@ -69,24 +69,23 @@ export default class Tile extends THREE.Mesh {
 function BoxNoBottomGeometry(ww, hh, dd) {
     const geometry = new THREE.BufferGeometry();
     let w = ww / 2;
-    let h = hh / 2;
     let d = dd / 2;
     const vertices = new Float32Array([
         // Front face
-        -w, h, d,  -w,-h, d,   w,-h, d,
-        -w, h, d,   w,-h, d,   w, h, d,
+        -w,hh, d,  -w, 0, d,   w, 0, d,
+        -w,hh, d,   w, 0, d,   w,hh, d,
         // Back face
-        w, h,-d,   w,-h,-d,  -w,-h,-d,
-        w, h,-d,  -w,-h,-d,  -w, h,-d,
+        w,hh,-d,   w, 0,-d,  -w, 0,-d,
+        w,hh,-d,  -w, 0,-d,  -w,hh,-d,
         // Top face
-        -w, h,-d,  -w, h, d,   w, h, d,
-        -w, h,-d,   w, h, d,   w, h,-d,
+        -w,hh,-d,  -w,hh, d,   w,hh, d,
+        -w,hh,-d,   w,hh, d,   w,hh,-d,
         // Right face
-        -w, h,-d,  -w,-h,-d,  -w,-h, d,
-        -w, h,-d,  -w,-h, d,  -w, h, d,
+        -w,hh,-d,  -w, 0,-d,  -w, 0, d,
+        -w,hh,-d,  -w, 0, d,  -w,hh, d,
         // Left face
-        w, h, d,   w,-h, d,   w,-h,-d,
-        w, h, d,   w,-h,-d,   w, h,-d,
+        w,hh, d,   w, 0, d,   w, 0,-d,
+        w,hh, d,   w, 0,-d,   w,hh,-d,
     ]);
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.computeVertexNormals();
