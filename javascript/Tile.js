@@ -30,7 +30,6 @@ export default class Tile extends THREE.Mesh {
     }
     render() {
         this.children[0]?.render();
-        this._hasChangedHeight = false;
     }
     setColor(color) {
         this.material.color = new THREE.Color(color);
@@ -53,7 +52,7 @@ export default class Tile extends THREE.Mesh {
     }
     setHeight(height, updateChunk=true) {
         let currentHeight = this.position.y;
-        this.position.y = height * tileHeightStep;
+        this.position.y = Math.max(height * tileHeightStep, 0);
 
         if (currentHeight == this.position.y) return; // no change
 
@@ -61,7 +60,6 @@ export default class Tile extends THREE.Mesh {
             this.parent.reRender();
         else {
             this.parent._needsReRender = true;
-            this._hasChangedHeight = true;
         }
     }
 }

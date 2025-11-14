@@ -40,23 +40,13 @@ export default class TerrainBrushTool extends GeneralBrushTool {
             return;
         this._lastTileId = tile.uuid;
 
-        if (this._addSubtract == 0) { // in smoothing mode
-            let heights = [];
-            let avgHeight = 0;
-            function calculateAverage(numbers) {
-                if (numbers.length === 0) {
-                    return 0; // Handle empty array case
-                }
-                const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-                return sum / numbers.length;
-            }
-            this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile, index) => {
-                if (index == 0) avgHeight = Math.round(calculateAverage(heights));
-                tile.setHeight(avgHeight, false)
-            }, (tile) => {
-                heights.push(tile.height);
-                return tile;
-            });
+        if (Number.isNaN(this._addSubtract)) {
+            this.#smooth(args, tile);
+        }
+        else if (this._addSubtract == 0) { // in zero mode
+            this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
+                tile.setHeight(0, false)
+            );
         } else {
             this.GeneralBrushTool_applyBrush(this._diameter, tile, (tile) =>
                 tile.modifyHeight(this._addSubtract, false)
@@ -65,6 +55,30 @@ export default class TerrainBrushTool extends GeneralBrushTool {
         WorldQuill.Map.reRender();
 
         // args.resetMoveDistance();
+    }
+    #smooth(args, tile) {
+        let heights = [];
+        let avgHeight = 0;
+
+        function calculateAverage(numbers) {
+            if (numbers.length === 0) {
+                return 0; // Handle empty array case
+            }
+            const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            return sum / numbers.length;
+        }
+
+        function modifyMyHeight(tile, index) {
+            if (index == 0) avgHeight = Math.round(calculateAverage(heights));
+            if (avgHeight == tile.height) return;
+            let upDown = (avgHeight - tile.height > 0) ? 1 : -1;
+            tile.modifyHeight(upDown*0.5, false);
+        }
+
+        this.GeneralBrushTool_applyBrush(this._diameter, tile, modifyMyHeight, (tile) => {
+            heights.push(tile.height);
+            return tile;
+        });
     }
 
 
@@ -101,8 +115,8 @@ export default class TerrainBrushTool extends GeneralBrushTool {
                     {
                         type: 'button',
                         style: 'flex: 1; font-size: 16px; flex-basis: calc(50% - 20px);',
-                        class: [this._addSubtract==0 ? 'active' : ''],
-                        attrs: [['data-value', '0'], ['onclick', this.setAddSubtract.bind(this)]],
+                        class: [Number.isNaN(this._addSubtract) ? 'active' : ''],
+                        attrs: [['data-value', 'NaN'], ['onclick', this.setAddSubtract.bind(this)]],
                         content: '<i class="fa-solid fa-mound"></i> Smooth'
                     },
                     {

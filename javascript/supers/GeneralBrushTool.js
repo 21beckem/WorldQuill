@@ -12,6 +12,7 @@ export default class GeneralBrushTool extends Tool {
                 return tile.getNeighbour(x, y);
             })
             .filter(tile => !!tile)
+            .map(prefaceMethod)
             .forEach(applyMethod);
     }
 }
