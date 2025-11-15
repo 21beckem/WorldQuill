@@ -2,6 +2,7 @@ import Tool from '../supers/Tool.js';
 import * as THREE from '../assets/three.module.min.js';
 import { WorldQuill } from '../WorldQuill.js';
 import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
+import Cursor from '../assets/Cursor.js';
 
 export default class ChunkTool extends Tool {
     constructor() {
@@ -34,6 +35,8 @@ export default class ChunkTool extends Tool {
         // if no selected chunk, do nothing
         if (!this._currentlySelectedChunk) return;
 
+        Cursor.reset();
+
         // get the chunk I'm pointing at
         const chunk = this.#getRaycastedChunk(args);
         
@@ -42,11 +45,14 @@ export default class ChunkTool extends Tool {
 
         // starting to drag selected chunk
         this._currentlyDraggingChunk = chunk;
+        Cursor.set(Cursor.grabbing);
         WorldQuill.ThreeJsWorld._controls.enabled = false;
     }
     onMove(args) {
         // if not currently dragging a chunk, do nothing
         if (!this._currentlyDraggingChunk) return;
+
+        Cursor.set(Cursor.grabbing);
         
         // reset opacity on any previously hovered chunk
         this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
@@ -61,8 +67,18 @@ export default class ChunkTool extends Tool {
         this._newPositionChunkAfterDrag = chunk;
     }
     onHoverMove(args) {
-        // if currently selected a chunk, do nothing
-        if (this._currentlySelectedChunk) return;
+        // if currently selected a chunk, do nothing (except manage cursor)
+        if (this._currentlySelectedChunk) {
+            const chunk = this.#getRaycastedChunk(args, true);
+            if (!chunk) return;
+            if (chunk.id === this._currentlySelectedChunk.id)
+                Cursor.set(Cursor.grab);
+            else
+                Cursor.reset();
+            return;
+        }
+
+        Cursor.reset();
 
         // if currently hovering over a chunk, reset opacity
         this._currentlyHoveringOverChunk?.setOpacity(this._nonSelectedOpacity);
@@ -73,10 +89,16 @@ export default class ChunkTool extends Tool {
 
         // highlight this chunk
         this._currentlyHoveringOverChunk = chunk;
+        if (chunk.thisIsNotARealChunk)
+            Cursor.set(Cursor.copy);
+        else
+            Cursor.set(Cursor.pointer);
         chunk.setOpacity(1);
     }
     onUp(args) {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
+
+        Cursor.reset();
 
         // if was dragging a chunk, move it
         this.#moveChunkToNewPosition();

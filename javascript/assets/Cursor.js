@@ -36,6 +36,7 @@ Cursor.register('pointer', 'pointer');
 Cursor.register('grab', 'grab');
 Cursor.register('grabbing', 'grabbing');
 Cursor.register('crosshair', 'crosshair');
+Cursor.register('copy', 'copy');
 Cursor.register('text', 'text');
 Cursor.register('wait', 'wait');
 Cursor.register('none', 'none');
