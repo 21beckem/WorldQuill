@@ -26,7 +26,7 @@ export default class Map extends THREE.Group {
         super();
 
         if (!data)
-            data = Map.makeDefaultMap();
+            data = Map.makeDefaultMapData();
 
         if (data.uuid)
             this.uuid = data.uuid;
@@ -46,9 +46,9 @@ export default class Map extends THREE.Group {
         this.helpers.allEntities = this.children.flatMap(chunk => chunk._entities);
         this.helpers.allTilesAndWalls = this.helpers.allTiles.concat(this.helpers.allWalls);
     }
-    addChunk(x, y) {
-        if (this.checkifChunkExists(x, y)) return alert('Chunk already exists');
-        let newChunk = new Chunk(x, y);
+    addChunk(chunkData) {
+        if (this.checkifChunkExists(chunkData.l[0], chunkData.l[1])) return alert('Chunk already exists');
+        let newChunk = new Chunk(chunkData);
         this.helpers.allTiles.push(...newChunk.children);
         this.add(newChunk);
         newChunk.reRender(true);
@@ -69,33 +69,27 @@ export default class Map extends THREE.Group {
 
 
 
-    static makeDefaultMap() {
-        function makeDefaultTiles() {
-            return new Array(chunkWidthInTiles*chunkWidthInTiles).fill({
-                c: '#069937',
-                w: '#57360b',
-                h: 0
-            });
-        }
+    static makeDefaultMapData() {
         return {
             children: [
-                {
-                    l: [0,0],
-                    c: makeDefaultTiles()
-                },
-                {
-                    l: [1,0],
-                    c: makeDefaultTiles()
-                },
-                {
-                    l: [0,1],
-                    c: makeDefaultTiles()
-                },
-                {
-                    l: [1,1],
-                    c: makeDefaultTiles()
-                }
+                Map.makeDefaultChunkData(0,0),
+                Map.makeDefaultChunkData(1,0),
+                Map.makeDefaultChunkData(0,1),
+                Map.makeDefaultChunkData(1,1)
             ]
         }
+    }
+    static makeDefaultChunkData(x, y) {
+        return {
+            l: [x,y],
+            c: Map.makeDefaultTilesData()
+        }
+    }
+    static makeDefaultTilesData() {
+        return new Array(chunkWidthInTiles*chunkWidthInTiles).fill({
+            c: '#069937',
+            w: '#57360b',
+            h: 0
+        });
     }
 }

@@ -135,7 +135,9 @@ export default class ChunkTool extends Tool {
     #setSelectedChunk(chunk) {
         if (chunk.thisIsNotARealChunk) {
             // if this is not a real chunk, make a new chunk here
-            WorldQuill.Map.addChunk(chunk._location.x, chunk._location.y);
+            WorldQuill.Map.addChunk({
+                l: [chunk._location.x, chunk._location.y]
+            });
             this.#unselectChunk();
             this.#moveChunkToNewPosition();
         } else {

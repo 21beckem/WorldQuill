@@ -1,6 +1,7 @@
 import * as THREE from './assets/three.module.min.js';
 import Tile from './Tile.js';
 import { tileWidth, chunkWidthInTiles } from './constants.js';
+import Map from './Map.js';
 import { WorldQuill } from './WorldQuill.js';
 // import { Serializable } from './supers/Serializable.js';
 
@@ -23,6 +24,8 @@ export default class Chunk extends THREE.Group {
         this.#initChildren(data.c);
     }
     #initChildren(childData) {
+        if (!childData)
+            childData = Map.makeDefaultTilesData();
         const halfWidth = chunkWidthInTiles / 2.0;
         let dataI = 0;
         for (let w = -halfWidth; w < halfWidth; w++) {
