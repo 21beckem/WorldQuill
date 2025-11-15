@@ -13,12 +13,20 @@ html, body {
 </head>
 <body>
     <div style="width: 100vw; height: 100vh;" id="WorldQuillContainer"></div>
+
+    <script>
+    </script>
     
 
     <script type="module">
-        import { WorldQuill } from './javascript/WorldQuill.js';
-        import worldData from './world.json' with { type: 'json' };
-        WorldQuill.init('#WorldQuillContainer', worldData);
+import { WorldQuill } from './javascript/WorldQuill.js';
+const worldData = JSON.parse(localStorage.getItem('worldData'));
+
+WorldQuill.init('#WorldQuillContainer', worldData);
+
+WorldQuill.onSave = function(worldData) {
+    localStorage.setItem('worldData', JSON.stringify(worldData));
+};
     </script>
 </body>
 </html>

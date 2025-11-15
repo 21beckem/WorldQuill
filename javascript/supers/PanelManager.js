@@ -5,6 +5,7 @@ export default class PanelManager {
         this.initDOM(containerSelector);
 
         this.tools = [];
+        this.controlButtons = [];
     }
     addTool(tool) {
         this.tools.push(tool);
@@ -46,6 +47,11 @@ export default class PanelManager {
                 btn.classList.remove('active');
             }
         });
+    }
+
+    addControlButton(controlButton) {
+        this.controlButtons.push(controlButton);
+        this.ControlBarEl.appendChild(controlButton.domElement);
     }
 
 
@@ -230,6 +236,7 @@ export default class PanelManager {
                 </div>
             </div>
             <div class="right-section">
+                <div id="ControlBar" class="ui-panel" style="display: flex; justify-content: space-between; padding: 0; width: calc(100% + 40px)"></div>
                 <div class="ui-panel">
                     <h2 id="SidebarTitle" style="padding-left: 20px;"></h2>
                     <div id="SidebarDetails"></div>
@@ -238,6 +245,7 @@ export default class PanelManager {
             </div>
         `;
         this.TopNavEl = this.PanelContainer.querySelector('#TopNav');
+        this.ControlBarEl = this.PanelContainer.querySelector('#ControlBar');
         this.SidebarTitleEl = this.PanelContainer.querySelector('#SidebarTitle');
         this.SidebarDetailsEl = this.PanelContainer.querySelector('#SidebarDetails');
         this.SidebarHelpEl = this.PanelContainer.querySelector('#SidebarHelp');

@@ -6,6 +6,7 @@ import InteractTool from './tools/InteractTool.js';
 import PaintTool from './tools/PaintTool.js';
 import TerrainBrushTool from './tools/TerrainBrushTool.js';
 import ChunkTool from './tools/ChunkTool.js';
+import SaveButton from './controlButtons/SaveButton.js';
 
 class Tools extends Array {
     constructor() {
@@ -29,10 +30,13 @@ export class WorldQuill {
         this.PanelManager.addTool(new TerrainBrushTool());
         this.PanelManager.addTool(new ChunkTool());
 
+        this.PanelManager.addControlButton(new SaveButton());
+
         this.Map = new Map(worldData);
     }
-    static export() {
-        return this.Map.serialize();
+    static onSave(worldData) {
+        console.log('worldData', worldData);
+        alert('ERROR: WorldQuill.onSave function not implemented yet.\nworldData has been printed in console.');
     }
 }
 window.WorldQuill = WorldQuill;
