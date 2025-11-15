@@ -1,7 +1,7 @@
 import GeneralBrushTool from '../supers/GeneralBrushTool.js';
-import * as THREE from '../assets/three.module.min.js';
 import JSColor from "../assets/jscolor.js";
 import TileWalls from '../TileWalls.js';
+import Cursor from '../assets/Cursor.js';
 
 export default class PaintTool extends GeneralBrushTool {
     _diameter = 2;
@@ -109,10 +109,12 @@ export default class PaintTool extends GeneralBrushTool {
         if (this._inEyeDropperMode) return this.#stopEyedropper();
         this._eyedropperEl.style.opacity = 0.2;
         this._inEyeDropperMode = true;
+        Cursor.set(Cursor.eyedropper);
     }
     #stopEyedropper() {
         if (!this._inEyeDropperMode) return;
         this._eyedropperEl.style.opacity = 1.0;
         this._inEyeDropperMode = false;
+        Cursor.reset();
     }
 }

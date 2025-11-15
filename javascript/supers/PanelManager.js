@@ -1,3 +1,5 @@
+import Cursor from "../assets/Cursor.js";
+
 export default class PanelManager {
     constructor(containerSelector='body') {
         this.initDOM(containerSelector);
@@ -51,6 +53,7 @@ export default class PanelManager {
         this.SidebarTitleEl.innerText = tool.name;
         this.SidebarDetailsEl.innerHTML = '';
         this.SidebarHelpEl.innerHTML = HTMLifyer.generateSidebarHelp(tool);
+        Cursor.set(Cursor.default);
     }
     setDetails(details) {
         this.SidebarDetailsEl.innerHTML = '';
@@ -131,6 +134,7 @@ export default class PanelManager {
     box-shadow: var(--${this.containerId}-ui-box-shadow);
     border-radius: 5px;
     pointer-events: auto;
+    cursor: default;
 }
 
 #${this.containerId} #TopNav {

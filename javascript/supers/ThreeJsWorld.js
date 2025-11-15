@@ -2,6 +2,7 @@ import { renderer } from '../constants.js';
 import * as THREE from '../assets/three.module.min.js';
 import { OrbitControls } from '../assets/OrbitControls.min.js';
 import Raycaster from './Raycaster.js';
+import Cursor from '../assets/Cursor.js';
 
 export default class ThreeJsWorld {
     constructor(containerSelector) {
@@ -27,10 +28,12 @@ export default class ThreeJsWorld {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		
 		const container = document.querySelector(containerSelector);
-		if (container)
+		if (container) {
 			container.appendChild(renderer.domElement);
-		else
+			Cursor.target = renderer.domElement;
+		} else {
         	document.body.appendChild(renderer.domElement);
+		}
     }
     #handleWindowResize() {
         const onWindowResize = () => {
