@@ -5,28 +5,30 @@ import { WorldQuill } from './WorldQuill.js';
 // import { Serializable } from './supers/Serializable.js';
 
 export default class Chunk extends THREE.Group {
-    static toSerialize = [
-        'uuid',
-        'children',
-        '_location',
-        '_entities'
-    ];
+    serialize() {
+        return {
+            c: this.children.map(tile => tile.serialize()),
+            l: [this._location.x, this._location.y],
+            e: [] // entities
+        };
+    }
+
     _location = new THREE.Vector2();
     _entities = Array();
     _needsReRender = false;
-    constructor(x, y) {
+    constructor(data) {
         super();
-        this.move(x, y);
+        this.move(data.l[0], data.l[1]);
 
-        this.#initChildren();
+        this.#initChildren(data.c);
     }
-    #initChildren() {
+    #initChildren(childData) {
         const halfWidth = chunkWidthInTiles / 2.0;
+        let dataI = 0;
         for (let w = -halfWidth; w < halfWidth; w++) {
             for (let l = -halfWidth; l < halfWidth; l++) {
 
-                let tile = new Tile(w, l, this);
-                // tile.setHeight(l + w); // obviously change this later
+                let tile = new Tile(w, l, this, childData[dataI++]);
                 this.add(tile);
                 
             }

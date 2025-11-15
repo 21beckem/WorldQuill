@@ -4,23 +4,39 @@ import { WorldQuill } from './WorldQuill.js';
 import TileWalls from './TileWalls.js';
 
 export default class Tile extends THREE.Mesh {
-    constructor(locX, locY, parent) {
+    serialize() {
+        return {
+            c: this._color,
+            w: this._wallColor,
+            h: this.height
+        }
+    }
+
+
+    constructor(locX, locY, parent, data) {
+        const color = data.c,
+              wallColor = data.w,
+              height = data.h;
         super(
             BoxNoBottomGeometry(tileWidth, tileRimHeight, tileWidth),
             new THREE.MeshStandardMaterial({
-                color: 0x069937,
+                color: new THREE.Color(color),
             })
         );
+        this._color = color;
         this.parent = parent;
         this.chunk = parent;
-        this.wallColor = new THREE.Color(0x57360b);
+        this._wallColor = new THREE.Color(wallColor);
         WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
         this._localLoc = new THREE.Vector2(locX, locY);
         this.assignAbsoluteLocation();
-        this.setHeight(0);
+        this.setHeight(height, false);
 
-        this.add(new TileWalls(this, this.parent, this.wallColor));
+        this.castShadow = true;
+        this.receiveShadow = true;
+
+        this.add(new TileWalls(this, this.parent, this._wallColor));
     }
     assignAbsoluteLocation() {
         this._absoluteLoc = new THREE.Vector2(
@@ -29,13 +45,14 @@ export default class Tile extends THREE.Mesh {
         );
     }
     setWallColor(color) {
-        this.wallColor = new THREE.Color(color);
+        this._wallColor = color;
         this.children[0]?.setColor(color);
     }
     render() {
         this.children[0]?.render();
     }
     setColor(color) {
+        this._color = color;
         this.material.color = new THREE.Color(color);
     }
     getNeighbour(offsetX, offsetY) {

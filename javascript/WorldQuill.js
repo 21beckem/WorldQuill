@@ -20,7 +20,7 @@ export class WorldQuill {
     static tools = new Tools();
     static Map;
 
-    static init(containerSelector='body') {
+    static init(containerSelector='body', worldData=null) {
         this.ThreeJsWorld = new ThreeJsWorld(containerSelector);
         this.PanelManager = new PanelManager(containerSelector);
 
@@ -29,10 +29,10 @@ export class WorldQuill {
         this.PanelManager.addTool(new TerrainBrushTool());
         this.PanelManager.addTool(new ChunkTool());
 
-        this.Map = new Map();
+        this.Map = new Map(worldData);
     }
-    static setToolMode(mode) {
-        this.ThreeJsWorld._raycaster.setMode(mode);
+    static export() {
+        return this.Map.serialize();
     }
 }
 window.WorldQuill = WorldQuill;
