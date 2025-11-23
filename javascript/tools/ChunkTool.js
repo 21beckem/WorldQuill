@@ -21,6 +21,7 @@ export default class ChunkTool extends Tool {
         this._fakeChunks = [];
         this.#makeFakeChunksAtNewPositions();
         this.#unselectChunk();
+        this.#setUiDetails();
     }
     onDeactivate() {
         this.#unselectChunk();
@@ -131,6 +132,7 @@ export default class ChunkTool extends Tool {
             this._currentlySelectedChunk = null;
         }
         WorldQuill.Map.children.forEach(c => c.setOpacity(this._nonSelectedOpacity));
+        this.#UI_updateMenu(false);
     }
     #setSelectedChunk(chunk) {
         if (chunk.thisIsNotARealChunk) {
@@ -146,6 +148,7 @@ export default class ChunkTool extends Tool {
             this._currentlyHoveringOverChunk = null;
             chunk.setOpacity(1);
             this.#createOutline(chunk, false);
+            this.#UI_updateMenu(true);
         }
     }
 
@@ -153,6 +156,9 @@ export default class ChunkTool extends Tool {
         if (this._currentlyDraggingChunk) {
             this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
         }
+        this.#hardResetEntireTool();
+    }
+    #hardResetEntireTool() {
         this.activate();
         this.activate();
         WorldQuill.Map.reRender(true);
@@ -245,5 +251,76 @@ export default class ChunkTool extends Tool {
     #removeFakeChunks() {
         this._fakeChunks.forEach(fake => WorldQuill.Map.remove(fake));
         this._fakeChunks = [];
+    }
+
+
+    
+    // UI
+    #setUiDetails() {
+        WorldQuill.PanelManager.setDetails([
+            {
+                type: 'i',
+                attrs: [
+                    ['style', 'text-align: center'], ['id', 'chunkToolDefaultMessage']
+                ],
+                content: 'Select a chunk to begin'
+            },
+            {
+                type: 'div',
+                attrs: [
+                    ['id', 'chunkToolOptions'], ['style', `display: none; flex-direction: column; align-items: stretch; gap: 0.5em;`],
+                ],
+                children: [
+                    {
+                        type: 'i',
+                        attrs: [['style', 'text-align: center; margin-bottom: 1em;']],
+                        content: 'Chunk Options:',
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['onclick', this.btn_removeChunk.bind(this)],
+                        ],
+                        content: 'Remove Chunk'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['onclick', this.btn_duplicateChunk.bind(this)],
+                        ],
+                        content: 'Duplicate Chunk'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [['disabled', 'disabled']],
+                        content: '(To move it, just drag it to a gray square)',
+                    }
+                ]
+            }
+        ]);
+    }
+    #UI_updateMenu(isAChunkSelected) {
+        let chunkToolDefaultMessage = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkToolDefaultMessage');
+        let chunkToolOptions = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkToolOptions');
+        if (!chunkToolDefaultMessage || !chunkToolOptions) return;
+
+        if (isAChunkSelected) {
+            chunkToolDefaultMessage.style.display = 'none';
+            chunkToolOptions.style.display = 'flex';
+        } else {
+            chunkToolDefaultMessage.style.display = 'block';
+            chunkToolOptions.style.display = 'none';
+        }
+    }
+    btn_removeChunk() {
+        if (!confirm('Are you sure you want to remove this chunk?')) return;
+        WorldQuill.Map.remove(this._currentlySelectedChunk);
+        WorldQuill.Map.reRender(true);
+        this.#hardResetEntireTool();
+    }
+    btn_duplicateChunk() {
+        // TODO
+        alert('Duplicate chunk not implemented yet.');
+        this._currentlyInDuplicateMode = true;
     }
 }

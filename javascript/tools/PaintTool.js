@@ -18,7 +18,7 @@ export default class PaintTool extends GeneralBrushTool {
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
-        this.setUiDetails();
+        this.#setUiDetails();
     }
     onDeactivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
@@ -57,7 +57,7 @@ export default class PaintTool extends GeneralBrushTool {
 
 
     // UI
-    setUiDetails() {
+    #setUiDetails() {
         this._UI_colorPickerId = 'colorPicker_' + Date.now();
         WorldQuill.PanelManager.setDetails([
             {

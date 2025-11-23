@@ -1,0 +1,46 @@
+{
+    "type": "object",
+    "properties": {
+        "tiles": {
+            "type": "array",
+            "description": "a list of all the tiles in a chunk. This is a flat list that will be split into a 2D array of tiles with dimentions: 5 x 5",
+            "minItems": 25,
+            "maxItems": 25,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "h": {
+                        "type": "number",
+                        "description": "the height of the tile",
+                        "minimum": 0,
+                        "maximum": 40
+                    },
+                    "c": {
+                        "type": "string",
+                        "description": "the color of the tile (in HEX format)"
+                    },
+                    "w": {
+                        "type": "string",
+                        "description": "the color of the tile walls when the tile is raised up to make the chunk 3D (in HEX format)"
+                    }
+                },
+                "propertyOrdering": [
+                    "h",
+                    "c",
+                    "w"
+                ],
+                "required": [
+                    "h",
+                    "c",
+                    "w"
+                ]
+            }
+        }
+    },
+    "propertyOrdering": [
+        "tiles"
+    ],
+    "required": [
+        "tiles"
+    ]
+}

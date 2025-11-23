@@ -16,7 +16,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
     }
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
-        this.setUiDetails();
+        this.#setUiDetails();
     }
     onDeactivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
@@ -101,7 +101,7 @@ export default class TerrainBrushTool extends GeneralBrushTool {
 
 
     // UI
-    setUiDetails() {
+    #setUiDetails() {
         WorldQuill.PanelManager.setDetails([
             {
                 type: 'range',

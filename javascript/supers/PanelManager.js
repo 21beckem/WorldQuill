@@ -212,7 +212,7 @@ export default class PanelManager {
     margin: 0 auto;
     width: 100%;
 }
-#${this.containerId} #SidebarDetails button:hover,
+#${this.containerId} #SidebarDetails button:not(:disabled):hover,
 #${this.containerId} #SidebarDetails input[type="button"]:hover,
 #${this.containerId} #SidebarDetails select:hover,
 #${this.containerId} #SidebarDetails select option:hover {
@@ -223,6 +223,14 @@ export default class PanelManager {
 #${this.containerId} #SidebarDetails select.active,
 #${this.containerId} #SidebarDetails select option:checked {
     background-color: #ebe298;
+}
+#${this.containerId} button {
+    padding: 1em !important;
+}
+#${this.containerId} button:disabled {
+    opacity: 0.8;
+    color: inherit;
+    pointer-events: none;
 }
         `;
         container.appendChild(style);
