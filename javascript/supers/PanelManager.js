@@ -1,11 +1,28 @@
 import Cursor from "../assets/Cursor.js";
 
+import InteractTool from '../tools/InteractTool.js';
+import PaintTool from '../tools/PaintTool.js';
+import TerrainBrushTool from '../tools/TerrainBrushTool.js';
+import ChunkTool from '../tools/ChunkTool.js';
+import SaveButton from '../controlButtons/SaveButton.js';
+
 export default class PanelManager {
     constructor(containerSelector='body') {
         this.initDOM(containerSelector);
 
         this.tools = [];
         this.controlButtons = [];
+        this.#initTools();
+        this.#initControlButtons();
+    }
+    #initTools() {
+        this.addTool(new InteractTool());
+        this.addTool(new PaintTool());
+        this.addTool(new TerrainBrushTool());
+        this.addTool(new ChunkTool());
+    }
+    #initControlButtons() {
+        this.addControlButton(new SaveButton());
     }
     addTool(tool) {
         this.tools.push(tool);

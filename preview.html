@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldQuill</title>
+    <title>WorldQuill Preview</title>
     <style>
 html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
     </style>
 </head>
 <body>
-    <div style="width: 100vw; height: 100vh;" id="WorldQuillContainer"></div>
-
-    <script>
-    </script>
     
-
     <script type="module">
 import { WorldQuill } from './javascript/WorldQuill.js';
 const worldData = JSON.parse(localStorage.getItem('worldData'));
 
 WorldQuill.init({
-    containerSelector: '#WorldQuillContainer',
     worldData,
+    preview: true
 });
 
 WorldQuill.onSave = function(worldData) {

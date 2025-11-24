@@ -27,7 +27,6 @@ export default class Tile extends THREE.Mesh {
         this.parent = parent;
         this.chunk = parent;
         this._wallColor = new THREE.Color(wallColor);
-        WorldQuill.ThreeJsWorld._raycaster._flatListOfTiles.push(this);
         this.position.set(locX * tileWidth, 0, locY * tileWidth);
         this._localLoc = new THREE.Vector2(locX, locY);
         this.assignAbsoluteLocation();

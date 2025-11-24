@@ -7,7 +7,7 @@ import { WorldQuill } from './WorldQuill.js';
 export default class Map extends THREE.Group {
     serialize() {
         return {
-            children: this.children.map(chunk => chunk.serialize()),
+            children: this.realChunks.map(chunk => chunk.serialize()),
         }
     }
 

@@ -3,8 +3,6 @@ import * as THREE from '../assets/three.module.min.js';
 
 export default class Raycaster {
     _tools = Array();
-    _flatListOfTiles = Array();
-    _flatListOfEntityHitboxes = Array();
     #mode = null;
     constructor(camera, scene) {
         this._camera = camera;
@@ -16,7 +14,6 @@ export default class Raycaster {
 		this._moveMouseDistance = 0;
         this._draggingMouseMovedYet = false;
         this._mouseIsDown = false;
-        this._flatListOfTiles = Array();
 
         this.#setupPointerDown();
         this.#setupPointerMove();

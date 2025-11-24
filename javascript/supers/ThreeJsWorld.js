@@ -5,8 +5,9 @@ import Raycaster from './Raycaster.js';
 import Cursor from '../assets/Cursor.js';
 
 export default class ThreeJsWorld {
-    constructor(containerSelector) {
+    constructor(containerSelector, previewMode=false) {
         this._scene = new THREE.Scene();
+		this._previewMode = previewMode;
 
         this.#initThree(containerSelector);
         this.#handleWindowResize();
@@ -17,8 +18,6 @@ export default class ThreeJsWorld {
         this.#setupOrbitControls();
         this.#setupRenderLoop();
 		this.#setupRaycaster();
-
-        // this.#makeSimpleBox(0, 0, 0);
     }
     #initThree(containerSelector) {
         renderer.domElement.id = 'WorldQuillDomElement';
@@ -42,6 +41,8 @@ export default class ThreeJsWorld {
                 this._camera.updateProjectionMatrix();
             }
             renderer.setSize(window.innerWidth, window.innerHeight);
+			if (this._previewMode)
+				renderer.render(this._scene, this._camera);
         }
         window.addEventListener('resize', onWindowResize.bind(this), false);
 		setTimeout(onWindowResize.bind(this), 10);
@@ -90,26 +91,59 @@ export default class ThreeJsWorld {
 		this._scene.background = new THREE.Color( 0xf0f0f0 );
 	}
     #setupRenderLoop() {
-        renderer.setAnimationLoop(() => {
-            renderer.render(this._scene, this._camera);
-        });
+		// render loop
+		renderer.setAnimationLoop(() => {
+			renderer.render(this._scene, this._camera);
+			if (this._previewMode) this.#renderOnceInPreviewMode();
+		});
+		
     }
+	#renderOnceInPreviewMode() {
+		// turn off render loop
+		renderer.setAnimationLoop(null);
+
+		// place camera to show all objects
+		// 2. Calculate the center and size of the bounding box
+		const box = new THREE.Box3().setFromObject(this._scene.children.at(-1));
+		const center = new THREE.Vector3();
+		const size = new THREE.Vector3();
+		box.getCenter(center);
+		box.getSize(size);
+
+		// 3. Calculate the maximum dimension of the box
+		const maxDim = Math.max(size.x, size.y, size.z);
+
+		// 4. Set the camera position
+		// Adjust distance and position based on the maxDim and desired fov
+		const cameraZ = maxDim / Math.tan(this._camera.fov * Math.PI / 360) * 0.5;
+		this._camera.position.set(center.x, 200, center.z + cameraZ);
+
+		// 5. Make the camera look at the center of the scene
+		this._camera.lookAt(center);
+
+		// render scene
+		renderer.render(this._scene, this._camera);
+	}
 	#setupRaycaster() {
+		if (this._previewMode) return;
 		this._raycaster = new Raycaster(this._camera, this._scene);
 	}
 
     #setupOrbitControls() {
-        this._controls = new OrbitControls(
+		this._controls = new OrbitControls(
 			this._camera, renderer.domElement
 		);
 		this._controls.target.set(0, 20, 0);
 		this._controls.update();
+
+		if (this._previewMode)
+			this._controls.enabled = false;
     }
     #makeSimpleBox(x, y, z) {
 		const box = new THREE.Mesh(
 			new THREE.BoxGeometry(2, 2, 2),
 			new THREE.MeshStandardMaterial({
-				color: 0x808080,
+				color: 'red',
 			}));
 		box.position.set(x, y, z);
 		box.castShadow = true;

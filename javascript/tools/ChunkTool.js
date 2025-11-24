@@ -279,20 +279,25 @@ export default class ChunkTool extends Tool {
                     {
                         type: 'button',
                         attrs: [
+                            ['style', ' font-size: 1em'],
                             ['onclick', this.btn_removeChunk.bind(this)],
                         ],
-                        content: 'Remove Chunk'
+                        content: 'Remove'
                     },
                     {
                         type: 'button',
                         attrs: [
+                            ['style', ' font-size: 1em'],
                             ['onclick', this.btn_duplicateChunk.bind(this)],
                         ],
-                        content: 'Duplicate Chunk'
+                        content: 'Duplicate'
                     },
                     {
                         type: 'button',
-                        attrs: [['disabled', 'disabled']],
+                        attrs: [
+                            ['style', ' font-size: 1em'],
+                            ['disabled', 'disabled']
+                        ],
                         content: '(To move it, just drag it to a gray square)',
                     }
                 ]
