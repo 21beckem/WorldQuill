@@ -296,6 +296,22 @@ export default class ChunkTool extends Tool {
                         type: 'button',
                         attrs: [
                             ['style', ' font-size: 1em'],
+                            ['onclick', this.btn_exportChunk.bind(this)],
+                        ],
+                        content: 'Save to my collection'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['style', ' font-size: 1em'],
+                            ['onclick', this.btn_copyChunkToClipboard.bind(this)],
+                        ],
+                        content: 'Copy to clipboard'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['style', ' font-size: 1em'],
                             ['disabled', 'disabled']
                         ],
                         content: '(To move it, just drag it to a gray square)',
@@ -326,6 +342,27 @@ export default class ChunkTool extends Tool {
     btn_duplicateChunk() {
         // TODO
         alert('Duplicate chunk not implemented yet.');
+        console.log(
+            JSON.stringify(this._currentlySelectedChunk.serialize()
+        ));
         this._currentlyInDuplicateMode = true;
+    }
+    btn_copyChunkToClipboard() {
+        let map = {
+            children: [this._currentlySelectedChunk.serialize()],
+        };
+        navigator.clipboard.writeText(JSON.stringify(map))
+            .then(function() {
+                console.log('Chunk copied to clipboard');
+            })
+            .catch(function(err) {
+                console.error('Error copying chunk to clipboard:', err);
+            });
+    }
+    btn_exportChunk() {
+        let map = {
+            children: [this._currentlySelectedChunk.serialize()],
+        };
+        WorldQuill.onSaveToCollection(map);
     }
 }

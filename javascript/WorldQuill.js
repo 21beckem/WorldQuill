@@ -23,5 +23,9 @@ export class WorldQuill {
         console.log('worldData', worldData);
         alert('ERROR: WorldQuill.onSave function not implemented yet.\nworldData has been printed in console.');
     }
+    static onSaveToCollection(worldData) {
+        console.log('worldData', worldData);
+        alert('ERROR: WorldQuill.onSaveToCollection function not implemented yet.\nworldData has been printed in console.');
+    }
 }
 window.WorldQuill = WorldQuill;

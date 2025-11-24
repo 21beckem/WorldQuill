@@ -16,10 +16,14 @@ html, body {
     
     <script type="module">
 import { WorldQuill } from './javascript/WorldQuill.js';
-const worldData = JSON.parse(localStorage.getItem('worldData'));
+let data = window.location.hash || null;
+if (data)
+    data = JSON.parse(decodeURIComponent(data.slice(1)));
+
+console.log('data', data);
 
 WorldQuill.init({
-    worldData,
+    worldData: data || null,
     preview: true
 });
 
