@@ -4,9 +4,8 @@ import Map from './Map.js';
 
 
 export class WorldQuill {
-    static Map;
-
     static init(options) {
+        this.options = options;
         const {
             containerSelector = 'body',
             worldData = null,

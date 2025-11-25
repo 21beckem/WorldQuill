@@ -4,6 +4,7 @@ import InteractTool from '../tools/InteractTool.js';
 import PaintTool from '../tools/PaintTool.js';
 import TerrainBrushTool from '../tools/TerrainBrushTool.js';
 import ChunkTool from '../tools/ChunkTool.js';
+import ImportTool from "../tools/ImportTool.js";
 import SaveButton from '../controlButtons/SaveButton.js';
 
 export default class PanelManager {
@@ -20,6 +21,7 @@ export default class PanelManager {
         this.addTool(new PaintTool());
         this.addTool(new TerrainBrushTool());
         this.addTool(new ChunkTool());
+        this.addTool(new ImportTool());
     }
     #initControlButtons() {
         this.addControlButton(new SaveButton());
@@ -199,6 +201,7 @@ export default class PanelManager {
 #${this.containerId} #SidebarDetails label {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 #${this.containerId} #SidebarDetails .jscolor {
