@@ -2,6 +2,7 @@ import Tool from '../supers/Tool.js';
 import { WorldQuill } from '../WorldQuill.js';
 
 export default class ImportTool extends Tool {
+    mapJson = null;
     constructor() {
         super('import', 'p');
         this.name = 'Import Chunk(s)';
@@ -10,7 +11,6 @@ export default class ImportTool extends Tool {
         this.description = `Take other creations for yourself or others and add them to your world! Begin by find a design <a href="/browse/" target="_blank">here</a>, or by copying an existing chunk in this world using the Chunk Manager tool.`;
     }
     onActivate(args) {
-        this.mapJson = null;
         this.#setUiDetails();
 
         this.#loadRequestedMap();
@@ -36,13 +36,15 @@ export default class ImportTool extends Tool {
         if (sessionStorage.getItem(key)){
             this.#parseClipboard(sessionStorage.getItem(key));
             sessionStorage.removeItem(key);
+        } else if (this.mapJson) {
+            this.#loadMapPreview();
         }
     }
     #loadMapPreview() {
         let chunkPreviewContainer = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkPreviewContainer');
         if (!chunkPreviewContainer) return;
 
-        chunkPreviewContainer.querySelector('iframe').src = 'preview.html#' + encodeURIComponent(JSON.stringify(this.mapJson));
+        chunkPreviewContainer.querySelector('iframe').src = 'preview.html?timestamp=' + Date.now() + '#' + encodeURIComponent(JSON.stringify(this.mapJson));
 
         chunkPreviewContainer.style.display = 'flex';
     }
