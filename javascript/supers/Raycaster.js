@@ -61,8 +61,9 @@ export default class Raycaster {
         });
     }
     #doOnAllEvents(event, calculateDistance=true) {
-        let newMouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        let newMouseY = -(event.clientY / window.innerHeight) * 2 + 1
+        let canvasBounds = renderer.getContext().canvas.getBoundingClientRect();
+        let newMouseX = ((event.clientX-canvasBounds.left)/(canvasBounds.right-canvasBounds.left)) * 2 - 1;
+        let newMouseY = -((event.clientY-canvasBounds.top)/(canvasBounds.bottom-canvasBounds.top)) * 2 + 1;
 
         if (calculateDistance) {
             this._moveMouseDistance += Math.sqrt(Math.pow(this._moveMouse.y - newMouseY, 2) + Math.pow(this._moveMouse.x - newMouseX, 2));
@@ -91,6 +92,7 @@ export default class Raycaster {
     castFunction(intersectables) {
         if (!intersectables)
             return [];
+
         this._raycaster.setFromCamera(this._moveMouse, this._camera);
         return this._raycaster.intersectObjects(intersectables, false);
     }

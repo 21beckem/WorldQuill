@@ -1,5 +1,6 @@
 import Tool from '../supers/Tool.js';
 import { WorldQuill } from '../WorldQuill.js';
+import { getAbsolutePath } from '../constants.js';
 
 export default class ImportTool extends Tool {
     mapJson = null;
@@ -44,7 +45,7 @@ export default class ImportTool extends Tool {
         let chunkPreviewContainer = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkPreviewContainer');
         if (!chunkPreviewContainer) return;
 
-        chunkPreviewContainer.querySelector('iframe').src = 'preview.html?timestamp=' + Date.now() + '#' + encodeURIComponent(JSON.stringify(this.mapJson));
+        chunkPreviewContainer.querySelector('iframe').src = `${getAbsolutePath('preview.html')}?timestamp=${Date.now()}#${encodeURIComponent(JSON.stringify(this.mapJson))}`;
 
         chunkPreviewContainer.style.display = 'flex';
     }

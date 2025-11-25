@@ -92,9 +92,8 @@ export default class PanelManager {
 
     initDOM(containerSelector) {
         let container = document.querySelector(containerSelector);
-        container.style.position = 'relative';
         container.style.overflow = 'hidden';
-        container.style.boxSizing = 'border-box';
+        container.querySelector('canvas').style.outline = 'none';
 
         this.containerId = 'PanelContainer_' + Date.now();
         this.initCss(container);
