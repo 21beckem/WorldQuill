@@ -3,6 +3,7 @@ import * as THREE from '../assets/three.module.min.js';
 import { WorldQuill } from '../WorldQuill.js';
 import { tileWidth, chunkWidthInTiles, tileRimHeight } from '../constants.js';
 import Cursor from '../assets/Cursor.js';
+import ImportTool from './ImportTool.js';
 
 export default class ChunkTool extends Tool {
     constructor() {
@@ -340,12 +341,14 @@ export default class ChunkTool extends Tool {
         this.#hardResetEntireTool();
     }
     btn_duplicateChunk() {
-        // TODO
-        alert('Duplicate chunk not implemented yet.');
-        console.log(
-            JSON.stringify(this._currentlySelectedChunk.serialize()
-        ));
-        this._currentlyInDuplicateMode = true;
+        let map = {
+            children: [this._currentlySelectedChunk.serialize()],
+        };
+        sessionStorage.setItem(
+            'thisIsTheChunkToolFromWorldQuill.CouldYouPleasePasteThisJson',
+            JSON.stringify(map)
+        );
+        WorldQuill.PanelManager.tools.find(t => t instanceof ImportTool).activate();
     }
     btn_copyChunkToClipboard() {
         let map = {

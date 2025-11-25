@@ -12,6 +12,8 @@ export default class ImportTool extends Tool {
     onActivate(args) {
         this.mapJson = null;
         this.#setUiDetails();
+
+        this.#loadRequestedMap();
     }
     onDeactivate() {
     }
@@ -29,7 +31,13 @@ export default class ImportTool extends Tool {
 
 
 
-
+    #loadRequestedMap() {
+        let key = 'thisIsTheChunkToolFromWorldQuill.CouldYouPleasePasteThisJson';
+        if (sessionStorage.getItem(key)){
+            this.#parseClipboard(sessionStorage.getItem(key));
+            sessionStorage.removeItem(key);
+        }
+    }
     #loadMapPreview() {
         let chunkPreviewContainer = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkPreviewContainer');
         if (!chunkPreviewContainer) return;
@@ -37,6 +45,36 @@ export default class ImportTool extends Tool {
         chunkPreviewContainer.querySelector('iframe').src = 'preview.html#' + encodeURIComponent(JSON.stringify(this.mapJson));
 
         chunkPreviewContainer.style.display = 'flex';
+    }
+
+
+
+    async #parseClipboard(clipText) {
+        // attempt to parse as JSON
+        let parsedJson;
+        try {
+            parsedJson = JSON.parse(clipText);
+        } catch(err) {
+            alert('Uh oh. Looks like that wasn\'t a valid WorldQuill object. Please re-copy it and try again.');
+        }
+        if (!parsedJson) return console.error('clipText could not be parsed as JSON', clipText);
+
+
+        // validate JSON
+        let valid = (()=>{
+            if (!parsedJson.children) return false;
+            if (parsedJson.children.length == 0) return false;
+            if (!parsedJson.children.every(c => {
+                c.l && Array.isArray(c.l) && c.l.length == 2 &&
+                c.c && Array.isArray(c.c) && c.c.length == chunkWidthInTiles*chunkWidthInTiles &&
+                c.e && Array.isArray(c.e)
+            })) return false;
+            return true;
+        });
+        if (!valid) return alert('Oh no! It looks like something may be wrong with the WorldQuill object you pasted. Please re-copy it and try again.');
+
+        this.mapJson = parsedJson;
+        this.#loadMapPreview();        
     }
 
     
@@ -91,31 +129,6 @@ export default class ImportTool extends Tool {
         }
         if (!clipText) return console.error('clipboard access not given');
 
-        
-        // attempt to parse as JSON
-        let parsedJson;
-        try {
-            parsedJson = JSON.parse(clipText);
-        } catch(err) {
-            alert('Uh oh. Looks like that wasn\'t a valid WorldQuill object. Please re-copy it and try again.');
-        }
-        if (!parsedJson) return console.error('clipText could not be parsed as JSON', clipText);
-
-
-        // validate JSON
-        let valid = (()=>{
-            if (!parsedJson.children) return false;
-            if (parsedJson.children.length == 0) return false;
-            if (!parsedJson.children.every(c => {
-                c.l && Array.isArray(c.l) && c.l.length == 2 &&
-                c.c && Array.isArray(c.c) && c.c.length == chunkWidthInTiles*chunkWidthInTiles &&
-                c.e && Array.isArray(c.e)
-            })) return false;
-            return true;
-        });
-        if (!valid) return alert('Oh no! It looks like something may be wrong with the WorldQuill object you pasted. Please re-copy it and try again.');
-
-        this.mapJson = parsedJson;
-        this.#loadMapPreview();
+        this.#parseClipboard(clipText);
     }
 }
