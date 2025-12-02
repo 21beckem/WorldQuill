@@ -49,6 +49,28 @@ export default class Chunk extends THREE.Group {
         this._locationStr = `${x},${y}`;
         this.position.set(x*tileWidth*chunkWidthInTiles, 0, y*tileWidth*chunkWidthInTiles);
     }
+    rotateRight() {
+        this.rotateLeft();
+        this.rotateLeft();
+        this.rotateLeft();
+    }
+    rotateLeft() {
+        let oldArr = this.serialize().c;
+        let newArr = [];
+        let total = chunkWidthInTiles*chunkWidthInTiles;
+        let firstI = (chunkWidthInTiles*(chunkWidthInTiles-1)) + 1;
+
+        for (let i = firstI; i <= total; i++) {
+            for (let j = i; j > 0; j-=chunkWidthInTiles) {
+                newArr.push( oldArr[j-1] );
+            }
+        }
+
+        this.children.forEach(tile => this.remove(tile));
+        this.children = [];
+        this.#initChildren(newArr);
+        this._needsReRender = true;
+    }
     setOpacity(opacity) {
         this.children.forEach(tile =>{
             tile.material.transparent = (opacity !== 1.0);

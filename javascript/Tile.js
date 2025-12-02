@@ -72,7 +72,8 @@ export default class Tile extends THREE.Mesh {
     }
     setHeight(height, updateChunk=true) {
         let currentHeight = this.position.y;
-        this.position.y = Math.max(height * tileHeightStep, 0);
+        let unrounded = Math.max(height * tileHeightStep, 0);
+        this.position.y = Math.round(unrounded*100)/100;
 
         if (currentHeight == this.position.y) return; // no change
 

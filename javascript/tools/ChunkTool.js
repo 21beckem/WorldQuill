@@ -297,6 +297,22 @@ export default class ChunkTool extends Tool {
                         type: 'button',
                         attrs: [
                             ['style', ' font-size: 1em'],
+                            ['onclick', this.btn_rotateLeftChunk.bind(this)],
+                        ],
+                        content: 'Rotate <i class="fa-solid fa-rotate-left"></i>'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['style', ' font-size: 1em'],
+                            ['onclick', this.btn_rotateRightChunk.bind(this)],
+                        ],
+                        content: 'Rotate <i class="fa-solid fa-rotate-right"></i>'
+                    },
+                    {
+                        type: 'button',
+                        attrs: [
+                            ['style', ' font-size: 1em'],
                             ['onclick', this.btn_exportChunk.bind(this)],
                         ],
                         content: 'Save to my collection'
@@ -349,6 +365,14 @@ export default class ChunkTool extends Tool {
             JSON.stringify(map)
         );
         WorldQuill.PanelManager.tools.find(t => t instanceof ImportTool).activate();
+    }
+    btn_rotateLeftChunk() {
+        this._currentlySelectedChunk.rotateLeft();
+        WorldQuill.Map.reRender();
+    }
+    btn_rotateRightChunk() {
+        this._currentlySelectedChunk.rotateRight();
+        WorldQuill.Map.reRender();
     }
     btn_copyChunkToClipboard() {
         let map = {
