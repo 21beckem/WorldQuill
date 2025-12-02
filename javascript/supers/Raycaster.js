@@ -90,11 +90,16 @@ export default class Raycaster {
         });
     }
     castFunction(intersectables) {
-        if (!intersectables)
+        try {
+            if (!intersectables)
+                return [];
+    
+            this._raycaster.setFromCamera(this._moveMouse, this._camera);
+            return this._raycaster.intersectObjects(intersectables, false);
+        } catch (err) {
+            console.warn('Raycaster hit nothing. More info:', err);
             return [];
-
-        this._raycaster.setFromCamera(this._moveMouse, this._camera);
-        return this._raycaster.intersectObjects(intersectables, false);
+        }
     }
     resetMoveDistanceFunction() {
         this._moveMouseDistance = 0;
