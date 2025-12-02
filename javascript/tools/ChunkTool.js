@@ -87,7 +87,7 @@ export default class ChunkTool extends Tool {
 
         // get this chunk if we're hovering over it
         const chunk = this.#getRaycastedChunk(args, true);
-        if (!chunk) return;
+        if (!chunk) return this._currentlyHoveringOverChunk = null;
 
         // highlight this chunk
         this._currentlyHoveringOverChunk = chunk;
