@@ -6,7 +6,7 @@ import { tileWidth, chunkWidthInTiles } from '../constants.js';
 import Cursor from '../assets/Cursor.js';
 
 export default class ImportTool extends Tool {
-    mapJson = null;
+    chunkJson = null;
     constructor() {
         super('import', 'p');
         this.name = 'Import Chunk(s)';
@@ -51,7 +51,11 @@ export default class ImportTool extends Tool {
     }
     onClick(args) {
         if (!this._currentlyHoveringOverChunk) return;
-        alert('place here!');
+        console.log(this._currentlyHoveringOverChunk);
+        this.chunkJson.l = this._currentlyHoveringOverChunk._location.toArray();
+        WorldQuill.Map.addChunk(this.chunkJson);
+        this.#removeFakeChunks();
+        this.#makeFakeChunksAtNewPositions();
     }
 
 
@@ -145,7 +149,7 @@ export default class ImportTool extends Tool {
         if (sessionStorage.getItem(key)){
             this.#parseClipboard(sessionStorage.getItem(key));
             sessionStorage.removeItem(key);
-        } else if (this.mapJson) {
+        } else if (this.chunkJson) {
             this.#loadMapPreview();
         }
     }
@@ -153,7 +157,11 @@ export default class ImportTool extends Tool {
         let chunkPreviewContainer = WorldQuill.PanelManager.SidebarDetailsEl.querySelector('#chunkPreviewContainer');
         if (!chunkPreviewContainer) return;
 
-        chunkPreviewContainer.querySelector('iframe').src = `${getAbsolutePath('preview.html')}?timestamp=${Date.now()}#${encodeURIComponent(JSON.stringify(this.mapJson))}`;
+        let mapJsonStr = encodeURIComponent(JSON.stringify({
+            children: [this.chunkJson],
+        }));
+
+        chunkPreviewContainer.querySelector('iframe').src = `${getAbsolutePath('preview.html')}?timestamp=${Date.now()}#${mapJsonStr}`;
 
         chunkPreviewContainer.style.display = 'flex';
     }
@@ -184,7 +192,7 @@ export default class ImportTool extends Tool {
         });
         if (!valid) return alert('Oh no! It looks like something may be wrong with the WorldQuill object you pasted. Please re-copy it and try again.');
 
-        this.mapJson = parsedJson;
+        this.chunkJson = parsedJson.children[0];
         this.#loadMapPreview();        
     }
 
