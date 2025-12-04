@@ -17,9 +17,11 @@ export default class TerrainBrushTool extends GeneralBrushTool {
     onActivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = false;
         this.#setUiDetails();
+        WorldQuill.Map.tileWallRenderMethod = 'scale';
     }
     onDeactivate() {
         WorldQuill.ThreeJsWorld._controls.enabled = true;
+        WorldQuill.Map.tileWallRenderMethod = 'generate';
     }
     onDown(args) {
         const foundList = args.castRay(WorldQuill.Map.helpers.allTiles);

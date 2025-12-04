@@ -22,9 +22,10 @@ export default class Map extends THREE.Group {
         allTilesAndWalls: Array(),
         update: this.#updateHelpers.bind(this)
     }
-    constructor(data=null) {
+    constructor() {
         super();
-
+    }
+    init(data=null) {
         if (!data)
             data = Map.makeDefaultMapData();
 
@@ -34,8 +35,20 @@ export default class Map extends THREE.Group {
         WorldQuill.ThreeJsWorld._scene.add(this);
 
         data.children.forEach(chunkData =>
-            this.addChunk(chunkData)
+            this.addChunk(chunkData, false)
         );
+        this.reRender(true);
+    }
+    
+    #tileWallRenderMethod = 'generate';
+    get tileWallRenderMethod() { return this.#tileWallRenderMethod; }
+    set tileWallRenderMethod(val) {
+        let options = ['scale', 'generate'];
+        if (!options.includes(val)) return console.error(`Invalid tileWallRenderMethod: ${val}`);
+        
+        this.#tileWallRenderMethod = val;
+        WorldQuill.dispatchEvent('changedRenderMethod');
+        this.reRender(true);
     }
     checkifChunkExists(x, y) {
         return this.realChunks.some(chunk => chunk._location.x == x && chunk._location.y == y);
@@ -46,12 +59,13 @@ export default class Map extends THREE.Group {
         this.helpers.allEntities = this.children.flatMap(chunk => chunk._entities);
         this.helpers.allTilesAndWalls = this.helpers.allTiles.concat(this.helpers.allWalls);
     }
-    addChunk(chunkData) {
+    addChunk(chunkData, reRender=true) {
         if (this.checkifChunkExists(chunkData.l[0], chunkData.l[1])) return alert('Chunk already exists');
         let newChunk = new Chunk(chunkData);
         this.helpers.allTiles.push(...newChunk.children);
         this.add(newChunk);
-        newChunk.reRender(true);
+        if (reRender)
+            newChunk.reRender(true);
         return newChunk;
     }
     reRender(forceAll=false) {
