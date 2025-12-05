@@ -2,7 +2,6 @@ import * as THREE from './assets/three.module.min.js';
 import Chunk from './Chunk.js';
 import { chunkWidthInTiles } from './constants.js';
 import { WorldQuill } from './WorldQuill.js';
-// import { Serializable } from './supers/Serializable.js';
 
 export default class Map extends THREE.Group {
     serialize() {

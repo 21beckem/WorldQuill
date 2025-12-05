@@ -2,8 +2,6 @@ import * as THREE from './assets/three.module.min.js';
 import Tile from './Tile.js';
 import { tileWidth, chunkWidthInTiles } from './constants.js';
 import Map from './Map.js';
-import { WorldQuill } from './WorldQuill.js';
-// import { Serializable } from './supers/Serializable.js';
 
 export default class Chunk extends THREE.Group {
     serialize() {
