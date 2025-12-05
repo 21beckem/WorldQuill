@@ -14,6 +14,8 @@ export default class ChunkTool extends Tool {
         this.description = `This tool allows you to manipulate chunks. As you can see, the look of the map itself has changed. Click on any chunk to select it and see more options. You can also click on any newly-appeared gray chunk to insert a new chunk in its place. While a chunk is selected, you can also drag it to a new location on the map. <br><b>Note:</b> You can only drag it where a gray chunk appears. In other words, it must be ajacent to an existing chunk.`;
     }
     onActivate(args) {
+        if (!this.currentlyHardResetting)
+            WorldQuill.Map.tileWallRenderMethod = 'scale';
         this._nonSelectedOpacity = 0.7;
         this._currentlyHoveringOverChunk = null;
         this._currentlySelectedChunk = null;
@@ -25,6 +27,8 @@ export default class ChunkTool extends Tool {
         this.#setUiDetails();
     }
     onDeactivate() {
+        if (!this.currentlyHardResetting)
+            WorldQuill.Map.tileWallRenderMethod = 'generate';
         this.#unselectChunk();
 
         // remove all fake chunks
@@ -156,15 +160,15 @@ export default class ChunkTool extends Tool {
     #moveChunkToNewPosition() {
         if (this._currentlyDraggingChunk) {
             this._currentlyDraggingChunk.move(this._newPositionChunkAfterDrag._location.x, this._newPositionChunkAfterDrag._location.y);
+            this.#hardResetEntireTool();
         }
-        this.#hardResetEntireTool();
     }
     #hardResetEntireTool() {
-        this.activate();
-        this.activate();
+        this.currentlyHardResetting = true;
         WorldQuill.Map.reRender(true);
         setTimeout(() =>  WorldQuill.Map.reRender(true), 100);
         setTimeout(() =>  this.activate(), 200);
+        setTimeout(() =>  this.currentlyHardResetting = undefined, 300);
     }
 
     #createOutline(chunk) {
