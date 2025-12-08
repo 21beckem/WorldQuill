@@ -9,11 +9,20 @@ export class WorldQuill {
         const {
             containerSelector = 'body',
             worldData = null,
-            preview = false,
+            previewId = false,
         } = options || {};
-        this.ThreeJsWorld = new ThreeJsWorld(containerSelector, preview);
+
+        // if this is a preview, check to see if we've cached the preview image
+        if (previewId && sessionStorage.getItem(previewId)) {
+            let imgUrl = sessionStorage.getItem(previewId);
+            let img = document.createElement('img');
+            img.src = imgUrl;
+            document.querySelector(containerSelector).appendChild(img);
+            return;
+        }
+        this.ThreeJsWorld = new ThreeJsWorld(containerSelector, previewId);
         
-        if (!preview)
+        if (!previewId)
             this.PanelManager = new PanelManager(containerSelector);
 
         this.Map = new Map();

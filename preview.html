@@ -24,7 +24,7 @@ console.log('data', data);
 
 WorldQuill.init({
     worldData: data || null,
-    preview: true
+    previewId: JSON.stringify(data) || false
 });
 
 WorldQuill.onSave = function(worldData) {
