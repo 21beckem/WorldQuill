@@ -43,9 +43,9 @@ export default class ThreeJsWorld {
             renderer.setSize(window.innerWidth, window.innerHeight);
 			if (this._previewMode) {
 				renderer.render(this._scene, this._camera);
-				try { // only try to save if we can. if we can't, no big deal
-					sessionStorage.setItem(this._previewMode, renderer.domElement.toDataURL('image/jpeg', 1));
-				} catch (e) {}
+				// try { // only try to save if we can. if we can't, no big deal
+				// 	sessionStorage.setItem(this._previewMode, renderer.domElement.toDataURL('image/jpeg', 1));
+				// } catch (e) {}
 			}
         }
         window.addEventListener('resize', onWindowResize.bind(this), false);

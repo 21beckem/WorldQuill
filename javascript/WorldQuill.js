@@ -12,14 +12,14 @@ export class WorldQuill {
             previewId = false,
         } = options || {};
 
-        // if this is a preview, check to see if we've cached the preview image
-        if (previewId && sessionStorage.getItem(previewId)) {
-            let imgUrl = sessionStorage.getItem(previewId);
-            let img = document.createElement('img');
-            img.src = imgUrl;
-            document.querySelector(containerSelector).appendChild(img);
-            return;
-        }
+        // // if this is a preview, check to see if we've cached the preview image
+        // if (previewId && sessionStorage.getItem(previewId)) {
+        //     let imgUrl = sessionStorage.getItem(previewId);
+        //     let img = document.createElement('img');
+        //     img.src = imgUrl;
+        //     document.querySelector(containerSelector).appendChild(img);
+        //     return;
+        // }
         this.ThreeJsWorld = new ThreeJsWorld(containerSelector, previewId);
         
         if (!previewId)
